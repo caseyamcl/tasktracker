@@ -1,0 +1,24 @@
+{
+    "name": "caseyamcl/tasktracker",
+    "type": "library",
+    "description": "A PHP library for keeping track of progress and stats for long running tasks",
+    "keywords": ["task", "asynchronous", "negotiation"],
+    "homepage": "http://github.com/caseyamcl/tasktracker",
+    "license": "MIT",
+    "authors":
+    [
+        {
+            "name":     "Casey McLaughlin",
+            "email":    "caseyamcl@gmail.com",
+            "homepage": "http://caseymclaughlin.com",
+            "role":     "Developer"
+        }
+    ],
+    "require":
+    {
+        "php"         : ">=5.3.1",
+    },
+    "autoload": {
+        "psr-0": { "TaskTracker": "src/" }
+    }
+}
