@@ -41,7 +41,7 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         $expected = array(
             'Test Message ..',
             '25 | 1:00:12 | Mem: 3.00mb (max: 4.04mb) | Avg: 2.15s Max: 3.04s Min: 0.30s'
-            . "\n" . '19.00 processed | 3 skipped | 3 failed'
+            . "\n" . '15 processed | 3 skipped | 3 failed'
         );
 
         $this->assertEquals($this->writelnOutput, $expected);
@@ -61,7 +61,7 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         $this->assertRegexp("/^Test Message \[83\%[=]+>([ ]+)?\](\s+)?$/", $this->writelnOutput[0]);
 
         $expectedLineTwo = "25 | 1:00:12 | Mem: 3.00mb (max: 4.04mb) | Avg: 2.15s Max: 3.04s Min: 0.30s\n"
-                            . "19.00 processed | 3 skipped | 3 failed";
+                            . "15 processed | 3 skipped | 3 failed";
                             
         $this->assertEquals($expectedLineTwo, $this->writelnOutput[1]);
     }
