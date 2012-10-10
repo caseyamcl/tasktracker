@@ -3,7 +3,7 @@ Task Tracker
 
 A library for tracking long-running tasks in PHP (when a simple progress bar isn't enough).
 
-There are many libraries for asyncrhonously executing long-running tasks in PHP, but there are few that
+There are many libraries for asynchronously executing long-running tasks in PHP, but there are few that
 handle reporting and tracking of these tasks in a predictable way.  This is what Task Tracker does.
 
 It takes snapshots of the state of your memory usage, time elapsed, and progress counts during the execution
