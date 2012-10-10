@@ -41,7 +41,7 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
     public function testSingleTick()
     {
         $obj = $this->getObj();
-        $obj->tick('hay', 2);
+        $obj->tick(2, 'hay');
         $result = $this->lastOutputHanderContent[0];
 
         $this->assertInstanceOf('\TaskTracker\Report', $result);
@@ -54,11 +54,11 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
     public function testMultipleTicks()
     {
         $obj = $this->getObj();
-        $obj->tick('hay', 2);
+        $obj->tick(2, 'hay');
         usleep(250000);
-        $obj->tick('there', 1);
+        $obj->tick(1, 'there');
         usleep(500000);
-        $obj->tick('pal', 2);
+        $obj->tick(2, 'pal');
 
         $result = $this->lastOutputHanderContent[0];
         $this->assertGreaterThan(0.75, $result->timeTotal);
@@ -73,7 +73,7 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
     public function testAbort()
     {
         $obj = $this->getObj();
-        $obj->tick('hey', 1);
+        $obj->tick(1, 'hey');
         $obj->abort('Failed');
 
         $result = $this->lastOutputHanderContent[0];
@@ -86,7 +86,7 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
     public function testFinish()
     {
         $obj = $this->getObj();
-        $obj->tick('hey', 1);
+        $obj->tick(1, 'hey');
         $obj->finish('All Done');
 
         $result = $this->lastOutputHanderContent[0];

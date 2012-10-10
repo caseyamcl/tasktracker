@@ -65,11 +65,6 @@ class Report
     public $numItemsSuccess;
 
     /**
-     * @var int  Number of warn items
-     */
-    public $numItemsWarn;
-
-    /**
      * @var int  Number of failed items
      */
     public $numItemsFail;

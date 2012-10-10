@@ -14,8 +14,7 @@ class Tracker
 {    
     const SUCCESS  = 1;
     const FAIL     = 0;
-    const WARN     = -1;
-    const SKIP     = -2;
+    const SKIP     = -1;
 
     const INFINITE = -1;
 
@@ -79,7 +78,7 @@ class Tracker
      * @param int    $count     The amount to increment by
      * @param int    $tickType  SUCCESS (default), WARN, or FAIL 
      */
-    public function tick($msg, $count = 1, $tickType = self::SUCCESS)
+    public function tick($count = 1, $msg = null, $tickType = self::SUCCESS)
     {
         $report = $this->buildReport('tick', $msg, $count, $tickType);        
         $this->sendToOutputHandler($report);
@@ -92,7 +91,7 @@ class Tracker
      *
      * @param string $msg
      */
-    public function finish($msg)
+    public function finish($msg = null)
     {
         $report = $this->buildReport('finish', $msg, 0);
         $this->sendToOutputHandler($report);
@@ -105,7 +104,7 @@ class Tracker
      *
      * @param string $msg
      */
-    public function abort($msg)
+    public function abort($msg = null)
     {
         $report = $this->buildReport('abort', $msg, 0);
         $this->sendToOutputHandler($report);
@@ -197,7 +196,6 @@ class Tracker
 
             switch($incType) {
                 case self::FAIL: $report->numItemsFail++; break;
-                case self::WARN: $report->numItemsWarn++; break;
                 case self::SKIP: $report->numItemsSkip++; break;
                 case self::SUCCESS: default:
                     $report->numItemsSuccess++;
