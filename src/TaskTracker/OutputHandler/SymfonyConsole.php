@@ -84,7 +84,7 @@ class SymfonyConsole extends OutputHandler
         $average     = number_format($report->avgTickTime, 2);
         $maxTime     = number_format($report->maxTickTime, 2);
         $minTime     = number_format($report->minTickTime, 2);
-        $numSuccess  = number_format($report->numItemsSuccess + $report->numItemsWarn, 2);
+        $numSuccess  = number_format($report->numItemsSuccess, 0);
         $numFailed   = number_format($report->numItemsFail, 0);
         $numSkipped  = number_format($report->numItemsSkip, 0);
 
