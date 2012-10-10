@@ -10,6 +10,11 @@ class Report
     const INFINITE = -1;
     
     /**
+     * @var string  'Abort', 'Tick', or 'Finish'
+     */
+    public $action;
+
+    /**
      * @var string
      */
     public $currMessage;
@@ -23,6 +28,11 @@ class Report
      * @var float
      */
     public $maxMemUsage;
+
+    /**
+     * @var float
+     */
+    public $startTime;
 
     /**
      * @var float  Current time
