@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 namespace TaskTracker;
 
@@ -7,6 +7,8 @@ namespace TaskTracker;
  */
 class Report
 {
+    const INFINITE = -1;
+    
     /**
      * @var string
      */
@@ -23,12 +25,17 @@ class Report
     public $maxMemUsage;
 
     /**
-     * @var int  Number of seconds
+     * @var float  Current time
+     */
+    public $currentTime;
+
+    /**
+     * @var float  Number of seconds
      */
     public $timeTotal;
 
     /**
-     * @var int  Number of seconds
+     * @var float  Number of seconds
      */
     public $timeSinceLastTick;
 
@@ -43,19 +50,24 @@ class Report
     public $numItems;
 
     /**
-     * @var int  Total number of succeeded items
+     * @var int  Number of succeeded items
      */
     public $numItemsSuccess;
 
     /**
-     * @var int  Total number of warn items
+     * @var int  Number of warn items
      */
     public $numItemsWarn;
 
     /**
-     * @var int  Total number of error items
+     * @var int  Number of failed items
      */
-    public $numItemsError;
+    public $numItemsFail;
+
+    /**
+     * @var int  Number of items skipped
+     */
+    public $numItemsSkip;
 
     /**
      * @var float  Number of seconds (avg time per tick)
@@ -71,6 +83,16 @@ class Report
      * @var float  In seconds
      */
     public $minTickTime;
+
+    /**
+     * @var float  The median tick time
+     */
+    public $medianTickTime;
+
+    /**
+     * @var int  The number of total items (-1 for infinity)
+     */
+    public $totalItems;
 } 
 
 /* EOF: Report.php */

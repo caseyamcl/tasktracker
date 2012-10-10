@@ -2,7 +2,7 @@
     "name": "caseyamcl/tasktracker",
     "type": "library",
     "description": "A PHP library for keeping track of progress and stats for long running tasks",
-    "keywords": ["task", "asynchronous", "negotiation"],
+    "keywords": ["task", "asynchronous", "negotiation", "progress", "report", "cli"],
     "homepage": "http://github.com/caseyamcl/tasktracker",
     "license": "MIT",
     "authors":
@@ -16,7 +16,11 @@
     ],
     "require":
     {
-        "php"         : ">=5.3.1",
+        "php": ">=5.3.1"
+    },
+    "require-dev":
+    {
+        "symfony/console": ">=2.1.0"
     },
     "autoload": {
         "psr-0": { "TaskTracker": "src/" }
