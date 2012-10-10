@@ -6,7 +6,7 @@ use TaskTracker\Report;
 /**
  * Fake Report (Finite)
  */
-class FakeReportFinite extends FakeReportFinite
+class FakeReportFinite extends Report
 {
     public $currMessage   = "Test Message";
     public $currMemUsage  = 3144728;

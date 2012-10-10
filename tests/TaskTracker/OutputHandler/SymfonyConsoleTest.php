@@ -57,7 +57,7 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         //Do the test
         $obj->tick($report);
 
-        //Check line one (variable width)
+        //Check line one (since the console width is variable, we check using regex)
         $this->assertRegexp("/^Test Message \[83\%[=]+>([ ]+)?\](\s+)?$/", $this->writelnOutput[0]);
 
         $expectedLineTwo = "25 | 1:00:12 | Mem: 3.00mb (max: 4.04mb) | Avg: 2.15s Max: 3.04s Min: 0.30s\n"

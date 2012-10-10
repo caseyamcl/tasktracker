@@ -39,7 +39,8 @@ class SymfonyConsole extends OutputHandler
         //Build a report
         $secondLine = $this->formatReport($report);
 
-        //Output
+        //Output (with clearn screen)
+        $this->output->write("\033c");
         $this->output->writeln($firstLine);
         $this->output->writeln($secondLine);
     }
