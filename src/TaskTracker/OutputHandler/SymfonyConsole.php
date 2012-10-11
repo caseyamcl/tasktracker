@@ -50,8 +50,8 @@ class SymfonyConsole extends OutputHandler
     /** @inherit */
     public function finish(Report $report)
     {
-        $this->output("All Done!\n\n");
-        $this->output($this->formatReport($report));
+        $this->output->writeln(sprintf("\n\nAll Done! %s\n\n", $report->currMessage));
+        $this->output->writeln($this->formatReport($report));
     }
 
     // --------------------------------------------------------------
@@ -59,8 +59,8 @@ class SymfonyConsole extends OutputHandler
     /** @inherit */
     public function abort(Report $report)
     {
-        $this->output("Aborting. . .\n\n");
-        $this->output($this->formatReport($report));
+        $this->output->writeln(sprintf("\n\nAborting. . . %s\n\n", $report->currMessage));
+        $this->output->writeln($this->formatReport($report));
     }
 
     // --------------------------------------------------------------
