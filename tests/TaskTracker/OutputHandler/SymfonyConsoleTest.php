@@ -39,6 +39,7 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
 
         //Check output
         $expected = array(
+            "\033c",
             'Test Message ..',
             '25 | 1:00:12 | Mem: 3.00mb (max: 4.04mb) | Avg: 2.15s Max: 3.04s Min: 0.30s'
             . "\n" . '15 processed | 3 skipped | 3 failed'
@@ -58,12 +59,38 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         $obj->tick($report);
 
         //Check line one (since the console width is variable, we check using regex)
-        $this->assertRegexp("/^Test Message \[83\%[=]+>([ ]+)?\](\s+)?$/", $this->writelnOutput[0]);
+        $this->assertRegexp("/^Test Message \[83\%[=]+>([ ]+)?\](\s+)?$/", $this->writelnOutput[1]);
 
         $expectedLineTwo = "25 | 1:00:12 | Mem: 3.00mb (max: 4.04mb) | Avg: 2.15s Max: 3.04s Min: 0.30s\n"
                             . "15 processed | 3 skipped | 3 failed";
                             
-        $this->assertEquals($expectedLineTwo, $this->writelnOutput[1]);
+        $this->assertEquals($expectedLineTwo, $this->writelnOutput[2]);
+    }
+
+    // --------------------------------------------------------------
+
+    public function testAbortReturnsExcpectedResult()
+    {
+        $obj = $this->getObj();
+        $report = $this->getFakeReport(true);
+
+        //Do the test
+        $obj->abort($report);
+
+        $this->assertEquals("\n\nAborting. . . Test Message\n\n", $this->writelnOutput[0]);
+    }
+
+    // --------------------------------------------------------------
+
+    public function testFinishReturnsExpectedResult()
+    {
+        $obj = $this->getObj();
+        $report = $this->getFakeReport(true);
+
+        //Do the test     
+        $obj->finish($report);
+
+        $this->assertEquals("\n\nAll Done! Test Message\n\n", $this->writelnOutput[0]);    
     }
 
     // --------------------------------------------------------------
@@ -88,6 +115,11 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         $mockSymConsoleUnit = $this->getMock(
             '\Symfony\Component\Console\Output\OutputInterface'
         );
+
+        $mockSymConsoleUnit
+            ->expects($this->any())
+            ->method('write')
+            ->will($this->returnCallback(array($this, 'mockSymConsoleUnitCallback')));
 
         $mockSymConsoleUnit
             ->expects($this->any())
