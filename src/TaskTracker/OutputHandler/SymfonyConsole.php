@@ -51,7 +51,6 @@ class SymfonyConsole extends OutputHandler
     public function finish(Report $report)
     {
         $this->output->writeln(sprintf("\n\nAll Done! %s\n\n", $report->currMessage));
-        $this->output->writeln($this->formatReport($report));
     }
 
     // --------------------------------------------------------------
@@ -60,7 +59,6 @@ class SymfonyConsole extends OutputHandler
     public function abort(Report $report)
     {
         $this->output->writeln(sprintf("\n\nAborting. . . %s\n\n", $report->currMessage));
-        $this->output->writeln($this->formatReport($report));
     }
 
     // --------------------------------------------------------------
