@@ -39,7 +39,7 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
 
         //Check output
         $expected = array(
-            "\033c",
+            "\033[F\033[F\033[F",
             'Test Message ..',
             '25 | 1:00:12 | Mem: 3.00mb (max: 4.04mb) | Avg: 2.15s Max: 3.04s Min: 0.30s'
             . "\n" . '15 processed | 3 skipped | 3 failed'
