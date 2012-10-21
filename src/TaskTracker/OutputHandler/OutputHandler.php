@@ -6,28 +6,39 @@ use TaskTracker\Report;
 abstract class OutputHandler
 {
     /**
+     * Start processing the task
+     *
+     * @param TaskTracker\Report $startReport
+     * @param string $message
+     */
+    public abstract function start(Report $startReport, $message);
+
+    /**
      * Provide a progress report
      *
-     * @param TaskTracker\Report
+     * @param TaskTracker\Report $report
+     * @param string $message
      * @return void
      */
-    public abstract function tick(Report $report);
+    public abstract function tick(Report $report, $message);
 
     /**
      * Finish the task
      *
-     * @param TaskTracker\Report
+     * @param TaskTracker\Report $lastReport
+     * @param string $message
      * @return void
      */
-    public abstract function finish(Report $report);
+    public abstract function finish(Report $lastReport, $message);
 
     /**
      * Abort the task prematurely
      *
-     * @param TaskTracker\Report
+     * @param TaskTracker\Report $lastReport
+     * @param string $message
      * @return void
      */
-    public abstract function abort(Report $report);
+    public abstract function abort(Report $lastReport, $message);
 
     //---------------------------------------------------------------
 

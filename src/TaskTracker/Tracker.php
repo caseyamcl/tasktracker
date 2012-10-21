@@ -12,49 +12,40 @@ namespace TaskTracker;
  */
 class Tracker
 {    
-    const SUCCESS  = 1;
-    const FAIL     = 0;
-    const SKIP     = -1;
-
-    const INFINITE = -1;
-
-    // --------------------------------------------------------------
+    const UNKNOWN = -1;
 
     /**
-     * @var float  Microtimestamp
+     * @var int  The number of total item (-1 for infinite/unknown)
      */
-    private $startTime;
-
-    /**
-     * @var Report  The previous report
-     */
-    private $lastReport;
+    private $totalItems;
 
     /**
      * @var array  Array of OuptutHandler Objects
      */
     private $outputHandlers = array();
-
-    /**
-     * @var int
-     */
-    private $totalItems;
     
+    /**
+     * @var Report  Holds the report
+     */
+    private $report;
+
     // --------------------------------------------------------------
 
     /**
      * Constructor
      *
      * @param Array|OutputHandler $outputHandlers  Accepts an array or a single handler
-     * @param int $totalItems                      Default is infinite (-1)
+     * @param int $totalItems                      Default is unknown (-1)
      */
-    public function __construct($outputHandlers, $totalItems = self::INFINITE)
+    public function __construct($outputHandlers, $totalItems = self::UNKNOWN)
     {
         //Add the output handlers
         if ( ! is_array($outputHandlers)) {
             $outputHandlers = array($outputHandlers);
         }
         array_map(array($this, 'addOutputHandler'), $outputHandlers);
+
+        $this->totalItems = $totalItems;
     }
 
     // --------------------------------------------------------------
@@ -69,19 +60,38 @@ class Tracker
         $this->outputHandlers[] = $handler;
     }
 
+    // --------------------------------------------------------------    
+
+    /**
+     * Start processing
+     *
+     * If this method is not called explicitely, it will automatically
+     * be called upon first tick
+     *
+     * @param string $msg  Optional message to include
+     */
+    public function start($msg = null)
+    {
+        $this->report = new Report($this->totalItems);
+        $this->sendToOutputHandlers('start', $msg);
+    }
+
     // --------------------------------------------------------------
 
     /**
      * Build a report and send it to the tick method in the output handlers
      *
-     * @param string $msg       Message to include for this report
-     * @param int    $count     The amount to increment by
-     * @param int    $tickType  SUCCESS (default), WARN, or FAIL 
+     * @param string $msg     Message to include for this report
+     * @param int    $status  SUCCESS (default), SKIP, or FAIL 
      */
-    public function tick($count = 1, $msg = null, $tickType = self::SUCCESS)
+    public function tick($msg = null, $status = Tick::SUCCESS)
     {
-        $report = $this->buildReport('tick', $msg, $count, $tickType);        
-        $this->sendToOutputHandler($report);
+        if ( ! $this->report) {
+            $this->start();
+        }
+
+        $this->report->tick(new Tick($msg, $status));
+        $this->sendToOutputHandlers('tick', $msg);
     }
 
     // --------------------------------------------------------------    
@@ -89,12 +99,15 @@ class Tracker
     /**
      * Build a report and send it to the finish method in the output handlers
      *
-     * @param string $msg
+     * @param string $msg  Optional message to include
      */
     public function finish($msg = null)
     {
-        $report = $this->buildReport('finish', $msg, 0);
-        $this->sendToOutputHandler($report);
+        if ( ! $this->report) {
+            throw new \RuntimeException("Cannot finish taskTracker.  No processing has started");
+        }
+
+        $this->sendToOutputHandlers('finish', $msg);
     }
 
     // --------------------------------------------------------------    
@@ -102,12 +115,15 @@ class Tracker
     /**
      * Build a report and send it to the abort method in the output handlers
      *
-     * @param string $msg
+     * @param string $msg  Optional message to include
      */
     public function abort($msg = null)
     {
-        $report = $this->buildReport('abort', $msg, 0);
-        $this->sendToOutputHandler($report);
+        if ( ! $this->report) {
+            throw new \RuntimeException("Cannot abort taskTracker.  No processing has started");
+        }
+
+        $this->sendToOutputHandlers('abort', $msg);
     }
 
     // --------------------------------------------------------------    
@@ -115,131 +131,17 @@ class Tracker
     /**
      * Send a report to the output handlers
      *
-     * @param string $method  Which method to call on the output handlers
-     * @param Report $report  The report to send
+     * @param string $action  'start', 'tick', 'finish', 'abort'
+     * @param string $message An optional message
      */
-    private function sendToOutputHandler(Report $report)
+    private function sendToOutputHandlers($action, $message = '')
     {
-        array_map(function($obj) use ($report) {
-            call_user_func(array($obj, $report->action), $report);
+        $report =& $this->report;
+
+        array_map(function($obj) use ($action, $report, $message) {
+            call_user_func(array($obj, $action), $report, $message);
         }, $this->outputHandlers);
     }
-
-    // --------------------------------------------------------------    
-
-    /** 
-     * Build a report
-     *
-     * @param string $msg     An optional message for the report
-     * @param int $increment  Number to increment by
-     * @param int $incType    SUCCESS (default), WARN, SKIP, or FAIL
-     * @return Report
-     */
-    protected function buildReport($action = 'tick', $msg = null, $increment = 1, $incType = self::SUCCESS)
-    {
-        //Get time
-        $microtime = microtime(true);
-
-        //If first tick, start
-        if ( ! $this->lastReport) {
-            $this->start();
-        }
-
-        //Build new report
-        $report = new Report();
-
-        //Num ticks
-        $report->numTicks = ($action == 'tick')
-            ? $this->lastReport->numTicks + 1
-            : $this->lastReport->numTicks;
-
-        //Other data
-        $report->action            = $action;
-        $report->currMessage       = ($msg === null) ? $this->lastReport->currMessage : $msg;
-        $report->currMemUsage      = memory_get_usage();
-        $report->maxMemUsage       = memory_get_peak_usage();
-        $report->startTime         = $this->startTime;        
-        $report->timeTotal         = $microtime - $this->startTime;
-        $report->timeSinceLastTick = $microtime - $this->lastReport->currentTime;
-        $report->currentTime       = $microtime;
-        $report->numItems          = $this->lastReport->numItems + $increment;
-        $report->numItemsSuccess   = $this->lastReport->numItemsSuccess;
-        $report->numItemsWarn      = $this->lastReport->numItemsWarn;
-        $report->numItemsFail      = $this->lastReport->numItemsFail;
-        $report->numItemsSkip      = $this->lastReport->numItemsSkip;
-        $report->totalItems        = $this->totalItems;
-
-        //Min and Max
-        //If this is the first time, the tick time is 0
-        if ($report->numTicks == 1) {
-            $report->maxTickTime = 0;
-            $report->minTickTime = 0;
-        }
-        //If this is the second time, we can provide a real time
-        elseif ($report->numTicks == 2) {
-            $report->maxTickTime = $report->timeSinceLastTick;
-            $report->minTickTime = $report->timeSinceLastTick;
-        }
-        //After that, we can calculate
-        else {
-            $report->maxTickTime = max(array($this->lastReport->maxTickTime, $report->timeSinceLastTick));
-            $report->minTickTime = min(array($this->lastReport->minTickTime, $report->timeSinceLastTick));
-        }
-
-        //Average and median
-        $report->avgTickTime       = $report->timeTotal / $report->numTicks;
-        $report->medianTickTime    = $report->maxTickTime / 2;
-
-
-        //Status of tick?
-        if ($increment > 0) {
-
-            switch($incType) {
-                case self::FAIL: $report->numItemsFail++; break;
-                case self::SKIP: $report->numItemsSkip++; break;
-                case self::SUCCESS: default:
-                    $report->numItemsSuccess++;
-            }
-        }
-
-        //Update last report
-        $this->lastReport = $report;
-
-        //Return it
-        return $report;
-    }
-
-    // --------------------------------------------------------------    
-
-    /**
-     * Start (executed on first tick)
-     */
-    protected function start()
-    {
-        //If no existing report report, start things up
-        if ( ! $this->lastReport) {
-
-            //Set start time
-            $this->startTime = microtime(true);
-
-            //Build starting report
-            $this->lastReport = new Report();
-            $this->lastReport->startTime = $this->startTime;
-            $this->lastReport->currMessage = 'Processing';
-            $this->lastReport->currentTime = $this->startTime;
-            $this->lastReport->numTicks = 0;
-            $this->lastReport->numItems = 0;
-            $this->lastReport->numItemsSuccess = 0;
-            $this->lastReport->numItemsWarn = 0;
-            $this->lastReport->numItemsFail = 0;
-            $this->lastReport->numItemsSkip = 0;
-            $this->lastReport->maxTickTime = -1;
-            $this->lastReport->minTickTime = -1;
-        }
-        else {
-            throw new \RuntimeException("Cannot start task tracker.  Already started!");
-        }
-    }    
 }
 
 /* EOF: TaskTracker.php */

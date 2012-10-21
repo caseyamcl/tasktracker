@@ -7,13 +7,13 @@ namespace TaskTracker;
  */
 class TrackerTest extends \PHPUnit_Framework_TestCase
 {
-    private $lastOutputHanderContent = array();
+    private $lastOutputHandlerContent = array();
 
     // --------------------------------------------------------------
 
     public function tearDown()
     {
-        $this->lastOutputHanderContent = array();
+        $this->lastOutputHandlerContent = array();
         parent::tearDown();
     }
 
@@ -27,58 +27,47 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
 
     // --------------------------------------------------------------
 
-    public function testNonOutputHandlerClassProducesError()
+    public function testUnknownConstantEqualsInfiniteConstantInReport()
     {
-        $this->setExpectedException("PHPUnit_Framework_Error");
-        $obj = new Tracker(new \stdClass);
+        $this->assertEquals(Report::INFINITE, Tracker::UNKNOWN);
     }
 
     // --------------------------------------------------------------
 
-    /**
-     * Tests the report generation method and the start() method
-     */
-    public function testSingleTick()
+    public function testStart()
     {
         $obj = $this->getObj();
-        $obj->tick(2, 'hay');
-        $result = $this->lastOutputHanderContent[0];
-
-        $this->assertInstanceOf('\TaskTracker\Report', $result);
-        $this->assertEquals(2, $result->numItems);
-        $this->assertEquals('hay', $result->currMessage);
+        $obj->start("Starting task");
+        $this->assertInstanceOf('TaskTracker\Report', $this->lastOutputHandlerContent[0]);
+        $this->assertEquals("Starting task", $this->lastOutputHandlerContent[1]);
     }
 
     // --------------------------------------------------------------
 
-    public function testMultipleTicks()
+    public function testTicks()
     {
         $obj = $this->getObj();
-        $obj->tick(2, 'hay');
-        usleep(250000);
-        $obj->tick(1, 'there');
-        usleep(500000);
-        $obj->tick(2, 'pal');
+        $obj->start();
+        $obj->tick('One');
+        $obj->tick('Two', Tick::SKIP);
 
-        $result = $this->lastOutputHanderContent[0];
-        $this->assertGreaterThan(0.75, $result->timeTotal);
-        $this->assertGreaterThan(0.5, $result->timeSinceLastTick);
-        $this->assertEquals(3, $result->numTicks);
-        $this->assertEquals(5, $result->numItems);
-        $this->assertEquals('pal', $result->currMessage);
+        $this->assertInstanceOf('TaskTracker\Report', $this->lastOutputHandlerContent[0]);
+        $this->assertEquals("Two", $this->lastOutputHandlerContent[1]);
+        $this->assertEquals(2, $this->lastOutputHandlerContent[0]->numItems);
     }
 
     // --------------------------------------------------------------
 
-    public function testAbort()
+    public function testTicksWithNoExplicitCallToStart()
     {
         $obj = $this->getObj();
-        $obj->tick(1, 'hey');
-        $obj->abort('Failed');
+        $obj->start();
+        $obj->tick('One');
+        $obj->tick('Two', Tick::SKIP);
 
-        $result = $this->lastOutputHanderContent[0];
-        $this->assertEquals('abort', $result->action);
-        $this->assertEquals(1, $result->numTicks);
+        $this->assertInstanceOf('TaskTracker\Report', $this->lastOutputHandlerContent[0]);
+        $this->assertEquals("Two", $this->lastOutputHandlerContent[1]);
+        $this->assertEquals(2, $this->lastOutputHandlerContent[0]->numItems);
     }
 
     // --------------------------------------------------------------
@@ -86,12 +75,59 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
     public function testFinish()
     {
         $obj = $this->getObj();
-        $obj->tick(1, 'hey');
+        $obj->start();
+        $obj->tick('One');
         $obj->finish('All Done');
 
-        $result = $this->lastOutputHanderContent[0];
-        $this->assertEquals('finish', $result->action);
-        $this->assertEquals(1, $result->numTicks);
+        $this->assertInstanceOf('TaskTracker\Report', $this->lastOutputHandlerContent[0]);
+        $this->assertEquals("All Done", $this->lastOutputHandlerContent[1]);
+        $this->assertEquals(1, $this->lastOutputHandlerContent[0]->numItems);
+    }
+
+    // --------------------------------------------------------------
+
+    public function testAbort()
+    {
+        $obj = $this->getObj();
+        $obj->start();
+        $obj->abort('Oops');
+
+        $this->assertInstanceOf('TaskTracker\Report', $this->lastOutputHandlerContent[0]);
+        $this->assertEquals("Oops", $this->lastOutputHandlerContent[1]);
+        $this->assertEquals(0, $this->lastOutputHandlerContent[0]->numItems);
+    }
+
+    // --------------------------------------------------------------
+
+    public function testFinishThrowsExceptionForNonStartedTask()
+    {
+        $this->setExpectedException("\RuntimeException");
+
+        $obj = $this->getObj();
+        $obj->finish("Done");
+    }
+
+    // --------------------------------------------------------------
+
+    public function testAbortThrowsExceptionForNonStartedTask()
+    {
+        $this->setExpectedException("\RuntimeException");
+
+        $obj = $this->getObj();
+        $obj->abort("Nuts");
+    }
+
+    // --------------------------------------------------------------
+
+    public function testFiniteTrackerReportProducesExpectedValues()
+    {
+        $obj = $this->getObj(20);
+        $obj->start();
+        $obj->tick('One');
+        $obj->tick('Two', Tick::SKIP);
+
+        $this->assertInstanceOf('TaskTracker\Report', $this->lastOutputHandlerContent[0]);
+        $this->assertEquals(20, $this->lastOutputHandlerContent[0]->totalItems);
     }
 
     // --------------------------------------------------------------
@@ -102,11 +138,14 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
      * @param int $numItems  -1 is infinite
      * @return Tracker
      */
-    protected function getObj($numItems = -1)
+    protected function getObj($numItems = Tracker::UNKNOWN)
     {
         //Get a mock outputHandler
         $handler = $this->getMock('TaskTracker\OutputHandler\OutputHandler');
 
+        $handler
+            ->expects($this->any())->method('start')
+            ->will($this->returnCallback(array($this, 'outputHandlerCallback')));
         $handler
             ->expects($this->any())->method('tick')
             ->will($this->returnCallback(array($this, 'outputHandlerCallback')));
@@ -128,7 +167,7 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
     public function outputHandlerCallback()
     {
         $args = func_get_args();
-        $this->lastOutputHanderContent = $args;
+        $this->lastOutputHandlerContent = $args;
     }
 }
 

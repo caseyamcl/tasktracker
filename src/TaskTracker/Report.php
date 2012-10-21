@@ -2,102 +2,180 @@
 
 namespace TaskTracker;
 
-/**
- * Value object - represents a report
- */
 class Report
 {
     const INFINITE = -1;
+
+    // --------------------------------------------------------------
+
+    //Basic Values
     
     /**
-     * @var string  'Abort', 'Tick', or 'Finish'
+     * @var float  Start timestamp in microseconds
      */
-    public $action;
+    private $startTime;
 
     /**
-     * @var string
+     * @var int  Number of total items (-1 for infinite)
      */
-    public $currMessage;
+    private $totalItems;
 
     /**
-     * @var float
+     * @var Tick  The current tick
      */
-    public $currMemUsage;
+    private $tick;
+
+    //Calculated Values
 
     /**
-     * @var float
+     * @var int  Number of items processed
      */
-    public $maxMemUsage;
+    private $numItems = 0;
 
     /**
-     * @var float
+     * @var float  The total time elaspsed
      */
-    public $startTime;
+    private $timeElapsed = 0;
 
     /**
-     * @var float  Current time
+     * @var int  The peak memory used (in bytes)
      */
-    public $currentTime;
+    private $peakMemory  = 0;
 
     /**
-     * @var float  Number of seconds
+     * @var int  Total number of items processed succesfully
      */
-    public $timeTotal;
+    private $numItemsSuccess = 0;
 
     /**
-     * @var float  Number of seconds
+     * @var int  Total number of items processed but failed
      */
-    public $timeSinceLastTick;
+    private $numItemsFail = 0;
 
     /**
-     * @var int  Total number of ticks so far
+     * @var int  Total number of items skipped
      */
-    public $numTicks;
+    private $numItemsSkip = 0;
 
     /**
-     * @var int  Total number of items
+     * @var float  The time elapsed since last tick
      */
-    public $numItems;
+    private $itemTime = 0;
 
     /**
-     * @var int  Number of succeeded items
+     * @var float  Maximum item process time (in microseconds)
      */
-    public $numItemsSuccess;
+    private $maxItemTime = 0;
 
     /**
-     * @var int  Number of failed items
+     * @var float  Minimum item process time (in microseconds)
      */
-    public $numItemsFail;
+    private $minItemTime = 0;
 
     /**
-     * @var int  Number of items skipped
+     * @var float  Average item process time (in microseconds)
      */
-    public $numItemsSkip;
+    private $avgItemTime = 0;
+
+    // --------------------------------------------------------------
 
     /**
-     * @var float  Number of seconds (avg time per tick)
+     * Constructor
+     *
+     * @param int   $totalItems  -1 for infinite
+     * @param float $startTime   If null, current time used
      */
-    public $avgTickTime;
+    public function __construct($totalItems = self::INFINITE, $startTime = null)
+    {
+        //Set total items
+        $this->totalItems = $totalItems;
+
+        //Set start time
+        $this->startTime = (float) $startTime ?: microtime(true);
+
+        //No tick to start
+        $this->tick = null;
+
+        //Current memory for peak memory
+        $this->peakMemory = memory_get_usage(true);
+    }
+
+    // --------------------------------------------------------------
 
     /**
-     * @var float  In seconds
+     * GET Magic Method
+     *
+     * @param string $item
+     * @return mixed
      */
-    public $maxTickTime;
+    public function __get($item)
+    {
+        $arr = $this->toArray();
+        return (isset($arr[$item])) ? $arr[$item] : null;
+    }
+
+    // --------------------------------------------------------------
 
     /**
-     * @var float  In seconds
+     * To Array
+     *
+     * @return array
      */
-    public $minTickTime;
+    public function toArray()
+    {
+        if ($this->tick instanceOf Tick) {
+            $arr = array_merge(get_object_vars($this), $this->tick->toArray());
+            unset($arr['tick']);
+            return $arr;
+        } else {
+            return get_object_vars($this);            
+        }
+    }
+
+    // --------------------------------------------------------------
 
     /**
-     * @var float  The median tick time
+     * Tick
+     *
+     * @param Tick $tick
      */
-    public $medianTickTime;
+    public function tick(Tick $tick)
+    {
+        //Get the prior tick
+        $priorTick = $this->tick;
 
-    /**
-     * @var int  The number of total items (-1 for infinity)
-     */
-    public $totalItems;
-} 
+        //Set the new tick
+        $this->tick = $tick;
+
+        //Calculate some things
+
+        //Number of items
+        $this->numItems++;
+
+        //Total time elapsed
+        $this->timeElapsed = $this->tick->timestamp - $this->startTime;
+
+        //Time elapsed since last tick
+        $this->itemTime = ($priorTick)
+            ? $this->tick->timestamp - $priorTick->timestamp
+            : $this->timeElapsed;
+
+        //Total number of items of a certain time
+        switch($this->tick->status) {
+            case Tick::SUCCESS: $this->numItemsSuccess++; break;
+            case Tick::FAIL:    $this->numItemsFail++;    break;
+            case Tick::SKIP:    $this->numItemsSkip++;    break;
+        }
+
+        //Max and min
+        $this->maxItemTime = max(array($this->maxItemTime, $this->itemTime));
+        $this->minItemTime = ($this->minItemTime)
+            ? min(array($this->minItemTime, $this->itemTime))
+            : $this->timeElapsed;
+
+        //Average
+        $this->avgItemTime = $this->timeElapsed / $this->numItems;
+    }
+}
 
 /* EOF: Report.php */

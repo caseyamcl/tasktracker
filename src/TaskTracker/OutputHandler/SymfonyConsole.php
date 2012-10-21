@@ -26,14 +26,14 @@ class SymfonyConsole extends OutputHandler
     // --------------------------------------------------------------
 
     /** @inherit */
-    public function tick(Report $report)
+    public function tick(Report $report, $msg = null)
     {
         //If we have a finite task, build a status bar
         if ($report->totalItems > 0) {
-            $firstLine = $this->buildStatusBar($report->currMessage, $report->numItems, $report->totalItems);
+            $firstLine = $this->buildStatusBar($msg, $report->numItems, $report->totalItems);
         }
         else { //or a spinner
-            $firstLine = $this->buildSpinner($report->currMessage, $report->numItems);
+            $firstLine = $this->buildSpinner($msg, $report->numItems);
         }
 
         //Build a report
@@ -51,18 +51,25 @@ class SymfonyConsole extends OutputHandler
 
     // --------------------------------------------------------------
 
-    /** @inherit */
-    public function finish(Report $report)
+    public function start(Report $initialReport, $msg = null)
     {
-        $this->output->writeln(sprintf("\n\nAll Done! %s\n\n", $report->currMessage));
+        $this->output->writeln(sprintf("\n\nStarting. . .\n%s", $msg));
     }
 
     // --------------------------------------------------------------
 
     /** @inherit */
-    public function abort(Report $report)
+    public function finish(Report $lastReport, $msg = null)
     {
-        $this->output->writeln(sprintf("\n\nAborting. . . %s\n\n", $report->currMessage));
+        $this->output->writeln(sprintf("\n\nAll Done! %s\n\n", $msg));
+    }
+
+    // --------------------------------------------------------------
+
+    /** @inherit */
+    public function abort(Report $lastReport = null, $msg)
+    {
+        $this->output->writeln(sprintf("\n\nAborting. . . %s\n\n", $msg));
     }
 
     // --------------------------------------------------------------
@@ -80,12 +87,12 @@ class SymfonyConsole extends OutputHandler
     {
         //Variables
         $numItems    = number_format($report->numItems, 0);
-        $timeElapsed = $this->formatTime($report->timeTotal);
-        $memoryUsage = number_format($report->currMemUsage / 1048576, 2); //mb
-        $peakMemory  = number_format($report->maxMemUsage  / 1048576, 2); //mb
-        $average     = number_format($report->avgTickTime, 2);
-        $maxTime     = number_format($report->maxTickTime, 2);
-        $minTime     = number_format($report->minTickTime, 2);
+        $timeElapsed = $this->formatTime($report->timeElapsed);
+        $memoryUsage = number_format($report->memUsage / 1048576, 2); //mb
+        $peakMemory  = number_format($report->peakMemory / 1048576, 2); //mb
+        $average     = number_format($report->avgItemTime, 2);
+        $maxTime     = number_format($report->maxItemTime, 2);
+        $minTime     = number_format($report->minItemTime, 2);
         $numSuccess  = number_format($report->numItemsSuccess, 0);
         $numFailed   = number_format($report->numItemsFail, 0);
         $numSkipped  = number_format($report->numItemsSkip, 0);
