@@ -40,8 +40,9 @@ class SymfonyConsole extends OutputHandler
         $secondLine = $this->formatReport($report);
 
         //If numTicks greater than 1, then backup a line
-        if ($report->numTicks > 1) {
-            $this->output->write("\033[F\033[F\033[F"); //033c clears the whole screen
+        //Alternatively, \033c clears the whole screen
+        if ($report->numItems > 1) {
+            $this->output->write("\033[F\033[F\033[F");
         }
 
         //Output (with clearn screen)

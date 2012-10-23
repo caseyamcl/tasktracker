@@ -60,7 +60,7 @@ class Monolog extends OutputHandler
     // --------------------------------------------------------------
 
     /** @inherit */
-    public function tick(Report $report)
+    public function tick(Report $report, $msg)
     {
         $now = microtime(true);
 
@@ -73,24 +73,32 @@ class Monolog extends OutputHandler
             }
         }
 
-        $this->logger->addInfo($report->currMessage, (array) $report);
+        $this->logger->addInfo($msg, $report->toArray());
         $this->lastOutputTime = $now;
     }
 
     // --------------------------------------------------------------
 
     /** @inherit */
-    public function abort(Report $report)
+    public function start(Report $report, $msg)
     {
-        $this->logger->addError("Aborting. . . " . $report->currMessage, (array) $report);
+        $this->logger->addInfo("Starting. . . " . $msg, $report->toArray());
     }
 
     // --------------------------------------------------------------
 
     /** @inherit */
-    public function finish(Report $report)
+    public function abort(Report $report, $msg)
     {
-        $this->logger->addInfo("Finishing. . . " . $report->currMessage, (array) $report);
+        $this->logger->addError("Aborting. . . " . $msg, $report->toArray());
+    }
+
+    // --------------------------------------------------------------
+
+    /** @inherit */
+    public function finish(Report $report, $msg)
+    {
+        $this->logger->addInfo("Finishing. . . " . $msg, $report->toArray());
     } 
 }
 

@@ -29,7 +29,7 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
 
     // --------------------------------------------------------------
 
-    public function testTickReturnsCorrectStringForInfniteTask()
+    public function testTickReturnsCorrectStringForInfiniteTask()
     {
         $obj = $this->getObj();
         $report = $this->getFakeReport();
@@ -40,12 +40,12 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         //Check output
         $expected = array(
             "\033[F\033[F\033[F",
-            'Test Message ..',
-            '25 | 1:00:12 | Mem: 3.00mb (max: 4.04mb) | Avg: 2.15s Max: 3.04s Min: 0.30s'
-            . "\n" . '15 processed | 3 skipped | 3 failed'
+            'Processing ...',
+            '2 | 00:00 | Mem: 7.00mb (max: 7.00mb) | Avg: 0.01s Max: 0.01s Min: 0.00s'
+            . "\n" . '1 processed | 1 skipped | 0 failed'
         );
 
-        $this->assertEquals($this->writelnOutput, $expected);
+        $this->assertEquals($expected, $this->writelnOutput);
     }
 
     // --------------------------------------------------------------
@@ -56,13 +56,13 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         $report = $this->getFakeReport(true);
 
         //Do the test
-        $obj->tick($report);
+        $obj->tick($report, 'Test Message');
 
         //Check line one (since the console width is variable, we check using regex)
-        $this->assertRegexp("/^Test Message \[83\%[=]+>([ ]+)?\](\s+)?$/", $this->writelnOutput[1]);
+        $this->assertRegexp("/^Test Message \[10\%[=]+>([ ]+)?\](\s+)?$/", $this->writelnOutput[1]);
 
-        $expectedLineTwo = "25 | 1:00:12 | Mem: 3.00mb (max: 4.04mb) | Avg: 2.15s Max: 3.04s Min: 0.30s\n"
-                            . "15 processed | 3 skipped | 3 failed";
+        $expectedLineTwo = "2 | 00:00 | Mem: 7.00mb (max: 7.00mb) | Avg: 0.00s Max: 0.00s Min: 0.00s\n"
+                            . "1 processed | 1 skipped | 0 failed";
                             
         $this->assertEquals($expectedLineTwo, $this->writelnOutput[2]);
     }
@@ -75,9 +75,21 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         $report = $this->getFakeReport(true);
 
         //Do the test
-        $obj->abort($report);
+        $obj->abort($report, 'Test Message');
 
         $this->assertEquals("\n\nAborting. . . Test Message\n\n", $this->writelnOutput[0]);
+    }
+
+    // --------------------------------------------------------------
+
+    public function testStartReturnsExpectedResult()
+    {
+        $obj = $this->getObj();
+        $report = $this->getFakeReport(true);
+
+        //Do the test
+        $obj->start($report, 'Test Start');
+        $this->assertEquals("\n\nStarting. . .\nTest Start", $this->writelnOutput[0]);
     }
 
     // --------------------------------------------------------------
@@ -88,7 +100,7 @@ class SymfonyConsoleTest extends \PHPUnit_Framework_TestCase
         $report = $this->getFakeReport(true);
 
         //Do the test     
-        $obj->finish($report);
+        $obj->finish($report, 'Test Message');
 
         $this->assertEquals("\n\nAll Done! Test Message\n\n", $this->writelnOutput[0]);    
     }

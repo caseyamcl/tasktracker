@@ -34,11 +34,11 @@ class MonologTest extends \PHPUnit_Framework_TestCase
         $obj = $this->getObj();
         $report = $this->getFakeReport();
 
-        $obj->tick($report);
+        $obj->tick($report, 'Test Message');
         $result = $this->loggerOutput;
         
         $this->assertEquals('Test Message', $result[0][0]);
-        $this->assertEquals((array) $report, $result[0][1]);
+        $this->assertEquals($report->toArray(), $result[0][1]);
     }
 
 
@@ -49,11 +49,11 @@ class MonologTest extends \PHPUnit_Framework_TestCase
         $obj = $this->getObj();
         $report = $this->getFakeReport();
 
-        $obj->abort($report);
+        $obj->abort($report, 'Test Message');
         $result = $this->loggerOutput[0];
         
         $this->assertEquals('Aborting. . . Test Message', $result[0]);
-        $this->assertEquals((array) $report, $result[1]);        
+        $this->assertEquals($report->toArray(), $result[1]);        
     }
 
     // --------------------------------------------------------------
@@ -63,11 +63,11 @@ class MonologTest extends \PHPUnit_Framework_TestCase
         $obj = $this->getObj();
         $report = $this->getFakeReport(true);
 
-        $obj->finish($report);
+        $obj->finish($report, 'Test Message');
         $result = $this->loggerOutput[0];
         
         $this->assertEquals('Finishing. . . Test Message', $result[0]);
-        $this->assertEquals((array) $report, $result[1]);                
+        $this->assertEquals($report->toArray(), $result[1]);                
     }
 
     // --------------------------------------------------------------
@@ -79,11 +79,11 @@ class MonologTest extends \PHPUnit_Framework_TestCase
 
         $report = $this->getFakeReport();
 
-        $obj->tick($report);
+        $obj->tick($report, 'Test Message');
         usleep(500000);
-        $obj->tick($report);
+        $obj->tick($report, 'Test Message');
         usleep(600000);
-        $obj->tick($report);
+        $obj->tick($report, 'Test Message');
 
         $this->assertEquals(2, count($this->loggerOutput));
     }
