@@ -140,11 +140,11 @@ to format seconds into human-readable timestamps:
 The <var>Report</var> class is an entity object that contains a information about
 the process and the state of the system during the last tick:
 
-   //Report is a TaskTracker\Report
-   $report->toArray();
+    //Report is a TaskTracker\Report
+    $report->toArray();
 
-   //Example Output
-   array(
+    //Example Output
+    array(
         'startTime'       => 1350953978.2356;
         'totalItems'      => 20;
         'numItems'        => 2;
@@ -161,4 +161,4 @@ the process and the state of the system during the last tick:
         'memUsage'        => 7340032;
         'timestamp'       => 1350953978.2385;
         'status'          => -1;
-   );
+    );
