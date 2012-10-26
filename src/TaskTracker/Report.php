@@ -152,6 +152,9 @@ class Report
         //Number of items
         $this->numItems++;
 
+        //Peak memory
+        $this->peakMemory = memory_get_peak_usage(true);
+
         //Total time elapsed
         $this->timeElapsed = $this->tick->timestamp - $this->startTime;
 
