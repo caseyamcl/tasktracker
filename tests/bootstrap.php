@@ -12,7 +12,7 @@ if (is_readable($autoloadFile)) {
     require_once($autoloadFile);
 }
 else {
-    throw new RuntimeException('Install dependencies to run test suite (composer.phar install).');
+    throw new RuntimeException('Install dependencies to run test suite (composer.phar install --dev).');
 }
 
 /* EOF: bootstrap.php */
