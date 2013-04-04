@@ -1,6 +1,8 @@
 Task Tracker
 ============
 
+[![Build Status](https://travis-ci.org/caseyamcl/tasktracker.png)](https://travis-ci.org/caseyamcl/tasktracker)
+
 A library for tracking long-running tasks in PHP (when a simple progress bar isn't enough).
 
 There are many libraries for asynchronously executing long-running tasks in PHP, but there are few that
