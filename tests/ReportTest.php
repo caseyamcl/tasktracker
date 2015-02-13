@@ -37,7 +37,10 @@ class ReportTest extends \PHPUnit_Framework_TestCase
     public function testToArrayReturnsExpectedValues()
     {
         $obj = $this->getReportObj();
-        $this->assertEquals($this->getFixtureData(), $obj->toArray());
+        $this->assertEquals(
+            array_keys($this->getFixtureData()),
+            array_keys($obj->toArray())
+        );
     }
 
     // ---------------------------------------------------------------
