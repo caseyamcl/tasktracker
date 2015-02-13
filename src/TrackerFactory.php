@@ -47,25 +47,15 @@ class TrackerFactory
     /**
      * Get tracker for a task
      *
-     * @param int                               $numItems             The total number of items (or -1 for unknown)
-     * @param array|EventSubscriberInterface[]  $listeners            Optionally specify listeners, or will use defaults
-     * @param bool                              $addDefaultListeners  If $listeners specified, also use default listeners?
+     * @param int                               $numItems      The total number of items (or -1 for unknown)
+     * @param array|EventSubscriberInterface[]  $extraListeners  Optionally specify listeners, or will use defaults
      * @return Tracker
      */
-    public function getTracker($numItems = Tracker::UNKNOWN, array $listeners = [], $addDefaultListeners = false)
+    public function getTracker($numItems = Tracker::UNKNOWN, array $extraListeners = [])
     {
         $tracker = new Tracker($numItems);
 
-        if ( ! empty($listeners)) {
-            $listeners = ($addDefaultListeners)
-                ? array_merge($this->defaultListeners, $listeners)
-                : $listeners;
-        }
-        else {
-            $listeners = $this->defaultListeners;
-        }
-
-        foreach ($listeners as $listener) {
+        foreach (array_merge($this->defaultListeners, $extraListeners) as $listener) {
             $tracker->getDispatcher()->addSubscriber($listener);
         }
 

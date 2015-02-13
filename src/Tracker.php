@@ -166,9 +166,10 @@ class Tracker
      * If this method is not called explicitely, it will automatically
      * be called upon first tick
      *
-     * @param string $msg  Optional message to include
+     * @param string $msg Optional message to include
+     * @param array  $extraInfo
      */
-    public function start($msg = null)
+    public function start($msg = null, array $extraInfo = [])
     {
         if ($this->status != self::NOT_STARTED) {
             throw new TrackerException("Cannot start tracker that was already started");
@@ -177,7 +178,7 @@ class Tracker
         $this->status = self::RUNNING;
         $this->startTime = microtime(true);
 
-        $this->lastTick = new Tick($this, Tick::SUCCESS, $msg, 0);
+        $this->lastTick = new Tick($this, Tick::SUCCESS, $msg, $extraInfo, 0);
         $this->dispatcher->dispatch(Events::TRACKER_START, $this->lastTick);
     }
 
@@ -186,18 +187,19 @@ class Tracker
     /**
      * Build a report and send it to the tick method in the output handlers
      *
-     * @param int $status SUCCESS (default), SKIP, or FAIL
-     * @param string $msg Message to include for this report
+     * @param int    $status SUCCESS (default), SKIP, or FAIL
+     * @param string $msg    Message to include for this report
+     * @param array  $extraInfo
      * @param int    $incrementBy
      * @return Report
      */
-    public function tick($status = Tick::SUCCESS, $msg = null, $incrementBy = 1)
+    public function tick($status = Tick::SUCCESS, $msg = null, array $extraInfo = [], $incrementBy = 1)
     {
         if ( ! $this->isRunning()) {
             $this->start();
         }
 
-        $this->lastTick = new Tick($this, $status, $msg, $incrementBy);
+        $this->lastTick = new Tick($this, $status, $msg, $extraInfo, $incrementBy);
         $this->dispatcher->dispatch(Events::TRACKER_TICK, $this->lastTick);
         return $this->lastTick->getReport();
     }
@@ -208,15 +210,16 @@ class Tracker
      * Build a report and send it to the finish method in the output handlers
      *
      * @param string $msg Optional message to include
+     * @param array  $extraInfo
      * @return Report
      */
-    public function finish($msg = null)
+    public function finish($msg = null, array $extraInfo = [])
     {
         if ( ! $this->isRunning()) {
             throw new TrackerException("Cannot finish Tracker.  Not running.");
         }
 
-        $this->lastTick = new Tick($this, Tick::SUCCESS, $msg,0);
+        $this->lastTick = new Tick($this, Tick::SUCCESS, $msg, $extraInfo, 0);
         $this->status = self::FINISHED;
 
         $this->dispatcher->dispatch(Events::TRACKER_FINISH, $this->lastTick);
@@ -229,15 +232,16 @@ class Tracker
      * Build a report and send it to the abort method in the output handlers
      *
      * @param string $msg Optional message to include
+     * @param array  $extraInfo
      * @return Report
      */
-    public function abort($msg = null)
+    public function abort($msg = null, array $extraInfo = [])
     {
         if ( ! $this->isRunning()) {
             throw new TrackerException("Cannot abort Tracker.  Not running.");
         }
 
-        $this->lastTick = new Tick($this, Tick::FAIL, $msg, 0);
+        $this->lastTick = new Tick($this, Tick::FAIL, $msg, $extraInfo, 0);
         $this->status = self::ABORTED;
 
         $this->dispatcher->dispatch(Events::TRACKER_ABORT, $this->lastTick);

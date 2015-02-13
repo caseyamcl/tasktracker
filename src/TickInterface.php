@@ -55,4 +55,8 @@ interface TickInterface
      */
     public function getReport();
 
+    /**
+     * @return array
+     */
+    public function getExtraInfo();
 }

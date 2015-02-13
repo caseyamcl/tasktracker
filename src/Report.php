@@ -230,6 +230,14 @@ class Report implements ReportInterface
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getExtraInfo()
+    {
+        return $this->tick->getExtraInfo();
+    }
+
     // ---------------------------------------------------------------
 
     /**

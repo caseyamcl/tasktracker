@@ -41,6 +41,11 @@ class Tick extends Event implements TickInterface
      */
     private $report;
 
+    /**
+     * @var array
+     */
+    private $extraInfo;
+
     // --------------------------------------------------------------
 
     /**
@@ -49,9 +54,10 @@ class Tick extends Event implements TickInterface
      * @param Tracker $tracker
      * @param int     $status
      * @param string  $message
+     * @param array   $extraInfo
      * @param int     $incrementBy
      */
-    public function __construct(Tracker $tracker, $status = self::SUCCESS, $message = '', $incrementBy = 1)
+    public function __construct(Tracker $tracker, $status = self::SUCCESS, $message = '', array $extraInfo = [], $incrementBy = 1)
     {
         if ( ! in_array($status, [self::FAIL, self::SKIP, self::SUCCESS])) {
             throw new InvalidArgumentException("Invalid tick status");
@@ -62,6 +68,7 @@ class Tick extends Event implements TickInterface
         $this->status      = (int) $status;
         $this->timestamp   = microtime(true);
         $this->message     = $message;
+        $this->extraInfo   = $extraInfo;
         $this->report      = new Report($this, $tracker);
     }
 
@@ -112,5 +119,13 @@ class Tick extends Event implements TickInterface
     public function getReport()
     {
         return $this->report;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExtraInfo()
+    {
+        return $this->extraInfo;
     }
 } 
