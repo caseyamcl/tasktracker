@@ -29,7 +29,9 @@ trait MagicPropsTrait
      */
     public function __get($item)
     {
-        return call_user_func($this->getMethodCallback($item));
+        if ($this->__isset($item)) {
+            return call_user_func($this->getMethodCallback($item));
+        }
     }
 
     // ---------------------------------------------------------------
@@ -53,9 +55,11 @@ trait MagicPropsTrait
         $outArr = [];
 
         foreach (get_class_methods(__CLASS__) as $mthd) {
+
             $ref = new \ReflectionMethod(__CLASS__, $mthd);
-            if ($ref->isPublic() && substr($ref, 0, 3) == 'get') {
-                $propName = strtolower($mthd{3}) . substr($mthd, 3);
+
+            if ($ref->isPublic() && substr($mthd, 0, 3) == 'get') {
+                $propName = strtolower($mthd{3}) . substr($mthd, 4);
                 $outArr[$propName] = call_user_func([$this, $mthd]);
             }
         }
