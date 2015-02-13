@@ -161,8 +161,8 @@ class Report implements ReportInterface
      */
     function getAvgItemTime()
     {
-        return ($this->getTimeElapsed() > 0)
-            ? $this->getTimeElapsed() / $this->getNumItemsProcessed()
+        return ($this->getNumItemsProcessed() > 0)
+            ? ($this->getTimeElapsed() / $this->getNumItemsProcessed())
             : 0;
     }
 
