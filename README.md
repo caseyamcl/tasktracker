@@ -5,162 +5,235 @@ Task Tracker
 
 A library for tracking long-running tasks in PHP (when a simple progress bar isn't enough).
 
-There are many libraries for asynchronously executing long-running tasks in PHP, but there are few that
-handle reporting and tracking of these tasks in a predictable way.  This is what Task Tracker does.
+At a Glance:
 
-The tool takes snapshots of the state of your memory usage, time elapsed, and progress counts during the execution
-of a task, and can send reports periodically to multiple output handlers (console, Monolog, etc).
+* Keeps track of memory usage and a number of progress statistics during long-running tasks
+* Useful for processes where a large number of small tasks are executed
+* Event-driven architecture using the Symfony Event-Dispatcher Component
+  - Can report on task progress to any `EventSubscriberInterface` objects
+* Provides built-in utilities for displaying task progress as:
+  - Symfony Console Progress Bar
+  - Running Log of Task Messages
+  - Sending Task Progress to PSR-3 Compatible Loggers
 
 For example, you may want to display a progress bar on the console during execution of a task, but also
 send periodic snapshots of the state of the system to Monolog while a task is executing.  Using a single
 Tracker object, you can accomplish both of these goals.
 
-Task Tracker comes pre-bundled with Symfony2 and Monolog console output handlers, but you can easily write your own.
+Example:
 
-Installation
-------------
+    use Symfony\Console\Output\ConsoleOutput;
+    use TaskTracker\Listener\SymfonyConsoleProgress
+    use TaskTracker\Tracker;
+    use TaskTracker\Tick;
+
+    // Setup a listener
+    $listener = new SymfonyConsoleProgress(new ConsoleOutput());
+    
+    // Setup a tracker for a job with 100 items
+    $tracker = new TaskTracker(100);
+    $tracker->getDispatcher()->addListener();
+    
+    $tracker->start("Let's go");
+    for ($i = 0; $i < 100; $i++) {
+        $tracker->tick();
+    }
+    $tracker->finish("All done");
+
+
+## Installation
 
 Install via Composer:
 
 1. Modify your _composer.json_ file:
 
         require {
-            ...
-            "caseyamcl/tasktracker": "dev-master"
+            "caseyamcl/tasktracker": "~2.0"
         }
         
-2. Run <var>composer.phar</var> update
+2. Run `composer update`
 
 Install manually:
 
-1. Download the source from http://github.com/caseyamcl/tasktracker
-2. Include the _src/TaskTracker_ folder in your code.  You can ignore the other files
+1. Download the source from <http://github.com/caseyamcl/tasktracker>
+2. Include the `src/TaskTracker` folder in your code using a PSR-4 compatible autoloader.
 
 Usage
 -----
 
-Decide which output handler(s) you wish to use.  For the example below, we'll use Monolog and
-Symfony Conosle:
+To track a task, create an instance of the `Tracker` class:
 
-    //Create an array to hold handlers
-    $handlers = array();
+    use TaskTracker\Tracker;
     
-    //Setup a monolog logger object (see Monolog documentation)
-    $monologObject = new Monolog\Logger();
-    
-    //Create a new Tasktracker monolog handler object
-    $handlers[] = new TaskTracker\OutputHandler\Monolog($monologObject);
-    
-    //Setup a Symfony console output object
-    $consoleOutput = new Symfony\Component\Console\Output\Output();
-    
-    //Create a new Tasktracker console object
-    $handlers[] = new TaskTracker\OutputHandler\SymfonyConsole($consoleOutput);
-    
-    //Create a new task tracker
-    $tracker = new TaskTracker\Tracker($handlers);
+    // Instantiate a tracker to track 100 items
+    $tracker = new Tracker(100);
 
-When we create our tracker, we can also specify if the task we're tracking has a finite number of items
-to process by supplying a second parameter:
+You can omit the number of items if you are working with an unknown number:
 
-    //The task we are tracking has 100 items
-    $tracker = new TaskTracker\Tracker($handlers, 100);
+    $tracker = new Tracker();
+    
+The `Tracker` class creates its own `EventDispatcher`, but you can optionally
+inject your own if you need to:
 
-Now we can trigger our tracker to create a report by using the <code>tick()</code> method:
+    $dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
+    
+    $tracker = new Tracker(100, $dispatcher);
+    // ..or..
+    $tracker = new Tracker(Tracker::UNKNOWN, $dispatcher);
+    
+To start tracking, simply call the `Tracker::start()` method;
 
-    //Inform the tracker that we've completed processing an item
+    // Start the tracker
+    $tracker->start('optional message');
+
+For every element you process, call the `Tracker::tick()` method until you
+are done:
+
+    // Tick
     $tracker->tick();
     
-We can also supply an optional message:
+There are three types of Ticks: *Success* (default), *Fail*, and *Skip*:
 
-    $tracker->tick("I just processed another item!");
+    use Tracker\Tick;
+
+    $tracker->tick(Tick::SUCCESS);
+    $tracker->tick(Tick::FAIL);
+    $tracker->tick(Tick::SKIP);
+
+You can also supply an optional message:
+
+    $tracker->tick(Tick::SUCCESS, 'Things are going well.');
+    $tracker->tick(Tick::FAIL, 'Crud.  Somethin went wrong');
+    $tracker->tick(Tick::SKIP, 'Skipping this record for whatever reason');
     
-Finally, we can supply a second argument if we wish to indicate if the items failed, succeeded, or were
-skipped:
+And, you can increment by more than one item at a time:
 
-    $tracker->tick("This item was skipped", TaskTracker\Tick::SKIP)
+    // Increment by 5 items
+    $tracker->tick(Tick::SUCCESS, '', 5);
     
-    //Available constants are:
-    // TaskTracker\Tick::SUCCESS (default)
-    // TaskTracker\Tick::SKIP
-    // TaskTracker\Tick::FAIL
+    // Increment by 3 items (skipped) with a message
+    $trakcer->tick(Tick::FAIL, 'No. Somethin went wrong', 3);
+
+When you are done, call the `Tracker::finish()` method:
+
+    $tracker->finish('Optional finish manage');
     
-The <var>tick()</var> method will send a report to the output handlers we defined upon construction,
-and those output handlers can decide what to do with it.  In this example, the Monolog handler will
-log a report as Monolog is configured, and the Symfony console output handler will output a nice
-looking progress report to the console.
+Or, if things go very wrong during processing, you can abort:
 
-The tracker class also includes <code>start()</code>, <code>finish()</code>, and <code>abort()</code>
-methods to indicate when a task is done, or prematurely aborted.  They all accept optional messages.
+    $tracker->abort('Optional abort message');
+
+The class contains a few helper methods, too:
+
+    // Have we started processing yet?
+    $tracker->isRunning();
     
-    //Call before first tick
-    $tracker->start("Starting up the process...");
+    // Get the last tick, which contains all kinds of information
+    $tracker->getLastTick();
+    
+    // Get the status of the process as an int (see class constants)
+    $tracker->getStatus();
+    
+    // Get the number of items processed thus far
+    $tracker->getNumProcessedItems();
+    
+    // Get only the number of failed items (works with SUCCESS and SKIP too)
+    $tracker->getNumProcessedItems(Tick::FAIL);
+    
+    // Get the time started
+    $tracker->getStartTime();
+    
+   
+### Listeners
 
-    //Call after last tick
-    $tracker->finish("All done!  Finish up.");
+The `Tracker` isn't very useful on its own without handlers to listen for
+events.  There are a few built-in listeners:
 
-    //Call in case something goes wrong
-    $tracker->abort("Aborting processing early for some reason");
+* `TaskTracker\Listener\Psr3Logger` - Logs Tracker events to any [PSR-3 Logger](#)
+* `TaskTracker\Listener\SymfonyConsoleLog` - Logs Tracker events to a Symfony
+   console, each event on its own line.
+* `TaskTracker\Listener\SymfonyConsoleProgress` - Logs tracker events to a Symfony
+   console progress bar indicator.
+   
+Using them is simple.  For example, suppose you have a Symfony Console Command, and
+you want to show a progress bar and also log events as they occur:
 
+    use TaskTracker\Tracker;
+    use TaskTracker\Tick;
+    use TaskTracker\Listener\SymfonyConsoleProgress;
 
-Writing your own Handler
-------------------------
-
-The included handlers work fine, but you will probably want to either extend them or write your own
-handler.  This is done by creating a class that extends the <code>TaskTracker\OutputHandler\OutputHandler</code>
-abstract class:
-
-    class MyHandler extends TaskTracker\OutputHandler\OutputHandler
+    use Symfony\Component\Console\Command\Command;
+    
+    class MyCommand extends Command
     {
-       //Required methods are:
-       public function start(TaskTracker\Report $report, $msg = null) {
-         //Do something with the report
-       }
-
-       public function tick(TaskTracker\Report $report, $msg = null) {
-         //Do something with the report
-       }
+        protected function configure()
+        {
+            $this->setName('example');
+            $this->setDescription("Demonstrate TaskTracker");
+        }
        
-       public function abort(TaskTracker\Report $report, $msg = null) {
-         //Do something with the report
-       }
-       
-       public function finish(TaskTracker\Report $report, $msg = null) {
-         //Do something with the report
-       }
-    }
-
-The abstract <code>TaskTracker\OutputHandler\OutputHandler</code> class contains a single helper method
-to format seconds into human-readable timestamps:
-
-    public function tick(TaskTracker\Report $report) {
+        protected function execute(InputInterface $input, OutputInterface $output)
+        {
+            $numItems = 10;
         
-        //Pretty print the total time elapsed thus far
-        $this->formatTime($report->timeTotal);
+            // A task tracker
+            $tracker = new Tracker($numItems);
+            
+            // Setup a Progress Bar listener
+            $tracker->getDispatcher()->addEventSubscriber(new SymfonyConsoleProgress($output));
+            
+            // Setup a Logger listener
+            $monolog = new \Monolog\Logger(/* some handlers */);
+            $tracker->getDispatcher()->addEventSubscriber(new Psr3Logger($monolog));
+            
+            // This is technically optional; if not called, it will automatically
+            // be called on the first Tick
+            $tracker->start("Let's go!");
+            
+            // The SymfonyConsoleProgress listener will output a progress bar
+            for ($i = 0; $i < 10; $i++) {
+                $tracker->tick(\Tick::SUCCESS, "On item: " . $i);
+                sleep(1);
+            }
+            
+            $tracker->finish('All done!');
+        }
     }
+
+    $tracker->getDispatcher()->addEventSubscriber();
+
+### Custom Listeners
+
+TaskTracker uses the [Symfony EventDispatcher](#) library, so any Symfony-compatible
+event listener can be used.
+
+There are four events:
+
+* `TaskTracker\Events::TRACKER_START`
+* `TaskTracker\Events::TRACKER_TICK`
+* `TaskTracker\Events::TRACKER_FINISH`
+* `TaskTracker\Events::TRACKER_ABORT`
+
+All four events dispatch an instance of the `TaskTracker\Task` class.  Your subscribers/listeners
+should accept those as parameters:
+
+    use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+    use TaskTracker\Tick;
     
-The <var>Report</var> class is an entity object that contains a information about
-the process and the state of the system during the last tick:
+    class MyEventSubscriber implements EventSubscriberInterface
+    {
+         public static function getSubscribedEvents()
+         {
+             return [
+                 TaskTracker\Events::TRACKER_START  => 'handle',
+                 TaskTracker\Events::TRACKER_TICK   => 'handle',
+                 TaskTracker\Events::TRACKER_FINISH => 'handle',
+             ];
+         }
+         
+         public static function handle(Tick $tickEvent)
+         {
+             // See all of the information about the progress of that tick
+             var_dump($tickEvent->getReport()->toArray());
+         }
+    }
 
-    //Report is a TaskTracker\Report
-    $report->toArray();
-
-    //Example Output
-    array(
-        'startTime'       => 1350953978.2356;
-        'totalItems'      => 20;
-        'numItems'        => 2;
-        'timeElapsed'     => 0.002849817276001;
-        'peakMemory'      => 7340032;
-        'numItemsSuccess' => 1;
-        'numItemsFail'    => 0;
-        'numItemsSkip'    => 1;
-        'itemTime'        => 0.0012638568878174;
-        'maxItemTime'     => 0.0015859603881836;
-        'minItemTime'     => 0.0012638568878174;
-        'avgItemTime'     => 0.0014249086380005;
-        'message'         = 'Two';
-        'memUsage'        => 7340032;
-        'timestamp'       => 1350953978.2385;
-        'status'          => -1;
-    );

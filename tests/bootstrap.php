@@ -15,4 +15,3 @@ else {
     throw new RuntimeException('Install dependencies to run test suite (composer.phar install --dev).');
 }
 
-/* EOF: bootstrap.php */
