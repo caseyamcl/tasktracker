@@ -1,3 +1,7 @@
+# IDE Stuff
+.idea/
+
+# Composer Stuff
 composer.phar
 composer.lock
 vendor/
