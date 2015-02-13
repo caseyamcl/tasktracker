@@ -48,7 +48,7 @@ class Report implements ReportInterface
         $this->tick    = $tick;
         $this->tracker = $tracker;
 
-        // These items need to be snapshotted upon report generation
+        // A snapshot of these values needs to be created upon report generation
         $this->memUsage     = memory_get_usage(true);
         $this->memPeakUsage = memory_get_peak_usage(true);
     }

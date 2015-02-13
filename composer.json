@@ -30,6 +30,6 @@
         "psr-4": { "TaskTracker\\": "src/" }
     },
     "autoload-dev": {
-        "psr-4": { "TaskTracker\\Test": "tests/" }
+        "psr-4": { "TaskTracker\\Test\\": "tests/" }
     }
 }
