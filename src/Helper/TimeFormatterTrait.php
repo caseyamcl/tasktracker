@@ -27,10 +27,9 @@ trait TimeFormatterTrait
      * Format Seconds into readable walltime (HH:ii:ss)
      *
      * @param float $elapsedTime
-     * @param int   $decimals
      * @return string
      */
-    public function formatSeconds($elapsedTime, $decimals = 0)
+    public function formatSeconds($elapsedTime)
     {
         $seconds = floor($elapsedTime);
         $output = array();
@@ -39,7 +38,7 @@ trait TimeFormatterTrait
         if ($seconds > 3600) {
             $hours    = floor($seconds / 3600);
             $seconds  = $seconds - (3600 * $hours);
-            $output[] = $hours;
+            $output[] = number_format($hours, 0);
         }
 
         //Minutes
@@ -57,12 +56,6 @@ trait TimeFormatterTrait
             ? str_pad((string) $seconds, 2, '0', STR_PAD_LEFT)
             : '00';
 
-        // Return string
-        return sprintf(
-            "%s%s",
-            implode(":", $output),
-            $decimals > 0 ? '.' . number_format($elapsedTime - $seconds, $decimals) : ''
-        );
-
+        return implode(':', $output);
     }
 }
