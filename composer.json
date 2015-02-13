@@ -31,5 +31,8 @@
     },
     "autoload-dev": {
         "psr-4": { "TaskTracker\\Test\\": "tests/" }
+    },
+    "extra": {
+        "branch-alias": { "dev-master": "devel-2.0" }
     }
 }
