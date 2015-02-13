@@ -15,5 +15,6 @@
   "status": 1,
   "incrementBy": 1,
   "memUsage": 4718592,
-  "memPeakUsage": 4718592
+  "memPeakUsage": 4718592,
+  "extraInfo": {"foo": "bar"}
 }

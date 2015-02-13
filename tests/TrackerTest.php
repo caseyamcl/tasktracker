@@ -16,6 +16,7 @@
 
 namespace TaskTracker\Test;
 
+use TaskTracker\Tick;
 use TaskTracker\Tracker;
 
 /**
@@ -51,6 +52,40 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
 
         $obj = $this->getTrackerObj(8);
         $this->assertEquals(8, $obj->getNumTotalItems());
+    }
+
+    // ---------------------------------------------------------------
+
+    public function testGetProcessedItemsReturnsZeroIfNotStarted()
+    {
+        $obj = $this->getTrackerObj(8);
+        $this->assertEquals(0, $obj->getNumProcessedItems());
+    }
+
+    // ---------------------------------------------------------------
+
+    public function testGetProcessedItemsReturnsExpectedValuesWhileRunning()
+    {
+        $obj = $this->getTrackerObj(12);
+
+        $obj->start();
+        for ($i = 1; $i <= 12; $i++) {
+            if ($i <= 3) {
+                $obj->tick(Tick::SUCCESS);
+            }
+            elseif ($i <= 6) {
+                $obj->tick(Tick::SKIP);
+            }
+            else {
+                $obj->tick(Tick::FAIL);
+            }
+        }
+        $obj->finish();
+
+        $this->assertEquals(12, $obj->getNumProcessedItems());
+        $this->assertEquals(3, $obj->getNumProcessedItems(Tick::SUCCESS));
+        $this->assertEquals(3, $obj->getNumProcessedItems(Tick::SKIP));
+        $this->assertEquals(6, $obj->getNumProcessedItems(Tick::FAIL));
     }
 
     // ---------------------------------------------------------------

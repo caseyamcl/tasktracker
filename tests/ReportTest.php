@@ -55,6 +55,7 @@ class ReportTest extends \PHPUnit_Framework_TestCase
         $tick->shouldReceive('getTimestamp')->andReturn(234.45);
         $tick->shouldReceive('getStatus')->andReturn(Tick::SUCCESS);
         $tick->shouldReceive('getIncrementBy')->andReturn(1);
+        $tick->shouldReceive('getExtraInfo')->andReturn(['foo' => 'bar']);
 
         $tracker = \Mockery::mock('\TaskTracker\Tracker');
         $tracker->shouldReceive('getStartTime')->andReturn(100);

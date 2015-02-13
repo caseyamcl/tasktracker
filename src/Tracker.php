@@ -64,7 +64,7 @@ class Tracker
         $this->status            = self::NOT_STARTED;
         $this->dispatcher        = $dispatcher ?: new EventDispatcher();
         $this->numTotalItems     = $totalItems;
-        $this->numProcessedItems = 0;
+        $this->numProcessedItems = [];
     }
 
     // --------------------------------------------------------------
@@ -98,7 +98,7 @@ class Tracker
      */
     public function getNumProcessedItems($tickType = null)
     {
-        if ($tickType) {
+        if (null !== $tickType) {
             return (array_key_exists($tickType, $this->numProcessedItems))
                 ? $this->numProcessedItems[$tickType]
                 : 0;
@@ -201,6 +201,15 @@ class Tracker
 
         $this->lastTick = new Tick($this, $status, $msg, $extraInfo, $incrementBy);
         $this->dispatcher->dispatch(Events::TRACKER_TICK, $this->lastTick);
+
+        // Increment the counter
+        if (array_key_exists($this->lastTick->getStatus(), $this->numProcessedItems)) {
+            $this->numProcessedItems[$this->lastTick->getStatus()] += $this->lastTick->getIncrementBy();
+        }
+        else {
+            $this->numProcessedItems[$this->lastTick->getStatus()] = $this->lastTick->getIncrementBy();
+        }
+
         return $this->lastTick->getReport();
     }
 
