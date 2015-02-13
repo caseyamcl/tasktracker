@@ -114,5 +114,3 @@ class Tick extends Event implements TickInterface
         return $this->report;
     }
 } 
-
-/* EOF: Tick.php */

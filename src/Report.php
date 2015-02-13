@@ -242,5 +242,3 @@ class Report implements ReportInterface
         return $arr;
     }
 }
-
-/* EOF: Report.php */

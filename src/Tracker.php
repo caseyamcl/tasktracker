@@ -244,5 +244,3 @@ class Tracker
         return $this->lastTick->getReport();
     }
 }
-
-/* EOF: TaskTracker.php */
