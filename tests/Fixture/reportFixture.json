@@ -1,0 +1,19 @@
+{
+  "timeStarted": 100,
+  "totalItemCount": 25,
+  "numItemsProcessed": 3,
+  "timeElapsed": 134.45,
+  "numItemsSuccess": 3,
+  "numItemsFail": 3,
+  "numItemsSkip": 3,
+  "itemTime": 134.45,
+  "maxItemTime": 134.45,
+  "minItemTime": 134.45,
+  "avgItemTime": 44.816666666667,
+  "message": "msg",
+  "timestamp": 234.45,
+  "status": 1,
+  "incrementBy": 1,
+  "memUsage": 4718592,
+  "memPeakUsage": 4718592
+}

@@ -11,7 +11,9 @@ use TaskTracker\Helper\MagicPropsTrait;
  */
 class Report implements ReportInterface
 {
-    use MagicPropsTrait;
+    use MagicPropsTrait {
+        toArray as traitToArray;
+    }
 
     // --------------------------------------------------------------
 
@@ -84,7 +86,7 @@ class Report implements ReportInterface
      */
     function getNumItemsProcessed()
     {
-        return $this->getNumItemsProcessed();
+        return $this->tracker->getNumProcessedItems();
     }
 
     /**
@@ -226,6 +228,18 @@ class Report implements ReportInterface
     public function getReport()
     {
         return $this;
+    }
+
+    // ---------------------------------------------------------------
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $arr = $this->traitToArray();
+        unset($arr['report'], $arr['tick']);
+        return $arr;
     }
 }
 
