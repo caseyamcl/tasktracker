@@ -103,7 +103,7 @@ class Report implements ReportInterface
      */
     function getNumItemsSuccess()
     {
-        return $this->getNumItemsProcessed(Tick::SUCCESS);
+        return $this->tracker->getNumProcessedItems(Tick::SUCCESS);
     }
 
     /**
@@ -111,7 +111,7 @@ class Report implements ReportInterface
      */
     function getNumItemsFail()
     {
-        return $this->getNumItemsProcessed(Tick::FAIL);
+        return $this->tracker->getNumProcessedItems(Tick::FAIL);
     }
 
     /**
@@ -119,7 +119,7 @@ class Report implements ReportInterface
      */
     function getNumItemsSkip()
     {
-        return $this->getNumItemsProcessed(Tick::SKIP);
+        return $this->tracker->getNumProcessedItems(Tick::SKIP);
     }
 
     /**
