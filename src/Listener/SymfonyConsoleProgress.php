@@ -71,6 +71,9 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
                 ? $tick->getReport()->getTotalItemCount()
                 : 0
         );
+
+        $this->progressBar->start();
+        $this->progressBar->setProgress(0);
     }
 
     // ---------------------------------------------------------------
@@ -99,8 +102,8 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
             );
         }
 
-        $this->progressBar->setProgress($rpt->getNumItemsProcessed());
         $this->progressBar->setMessage(implode(' | ', $msgSegs));
+        $this->progressBar->advance($rpt->getTick()->getIncrementBy());
     }
 
 
