@@ -75,26 +75,22 @@ class SymfonyConsoleLog implements EventSubscriberInterface
      * @param Tick $tick
      * @param bool $isErr
      */
-    public function writeLogLine(Tick $tick, $isErr = false)
+    public function writeLogLine(Tick $tick)
     {
         // Line segments
         $lineSegs = array();
 
         // 1st Segment is a star
-        if ($isErr) {
-            $lineSegs[] = "<fg=red>*</fg=red>";
-        }
-        else {
-            switch ($tick->getStatus()) {
-                case Tick::SUCCESS:
-                    $lineSegs[] = "<fg=green>*</fg=green>";
-                    break;
-                case Tick::FAIL:
-                    $lineSegs[] = "<fg=red>*</fg=red>";
-                    break;
-                case Tick::SKIP:default:
+        switch ($tick->getStatus()) {
+            case Tick::SUCCESS:
+                $lineSegs[] = "<fg=green>*</fg=green>";
+                break;
+            case Tick::FAIL:
+                $lineSegs[] = "<fg=red>*</fg=red>";
+                break;
+            case Tick::SKIP:
+            default:
                 $lineSegs[] = "*";
-            }
         }
 
         // Item Progress
