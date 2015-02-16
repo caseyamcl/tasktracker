@@ -200,8 +200,6 @@ class Tracker
         }
 
         $this->lastTick = new Tick($this, $status, $msg, $extraInfo, $incrementBy);
-        $this->dispatcher->dispatch(Events::TRACKER_TICK, $this->lastTick);
-
         // Increment the counter
         if (array_key_exists($this->lastTick->getStatus(), $this->numProcessedItems)) {
             $this->numProcessedItems[$this->lastTick->getStatus()] += $this->lastTick->getIncrementBy();
@@ -210,6 +208,7 @@ class Tracker
             $this->numProcessedItems[$this->lastTick->getStatus()] = $this->lastTick->getIncrementBy();
         }
 
+        $this->dispatcher->dispatch(Events::TRACKER_TICK, $this->lastTick);
         return $this->lastTick->getReport();
     }
 
