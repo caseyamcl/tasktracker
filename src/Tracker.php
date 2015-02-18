@@ -178,8 +178,9 @@ class Tracker
         $this->status = self::RUNNING;
         $this->startTime = microtime(true);
 
-        $this->lastTick = new Tick($this, Tick::SUCCESS, $msg, $extraInfo, 0);
-        $this->dispatcher->dispatch(Events::TRACKER_START, $this->lastTick);
+        $tick = new Tick($this, Tick::SUCCESS, $msg, $extraInfo, 0);
+        $this->dispatcher->dispatch(Events::TRACKER_START, $tick);
+        $this->lastTick = $tick;
     }
 
     // --------------------------------------------------------------
@@ -199,17 +200,19 @@ class Tracker
             $this->start();
         }
 
-        $this->lastTick = new Tick($this, $status, $msg, $extraInfo, $incrementBy);
+        $tick = new Tick($this, $status, $msg, $extraInfo, $incrementBy);
         // Increment the counter
-        if (array_key_exists($this->lastTick->getStatus(), $this->numProcessedItems)) {
-            $this->numProcessedItems[$this->lastTick->getStatus()] += $this->lastTick->getIncrementBy();
+        if (array_key_exists($tick->getStatus(), $this->numProcessedItems)) {
+            $this->numProcessedItems[$tick->getStatus()] += $tick->getIncrementBy();
         }
         else {
-            $this->numProcessedItems[$this->lastTick->getStatus()] = $this->lastTick->getIncrementBy();
+            $this->numProcessedItems[$tick->getStatus()] = $tick->getIncrementBy();
         }
 
-        $this->dispatcher->dispatch(Events::TRACKER_TICK, $this->lastTick);
-        return $this->lastTick->getReport();
+        $this->dispatcher->dispatch(Events::TRACKER_TICK, $tick);
+
+        $this->lastTick = $tick;
+        return $tick->getReport();
     }
 
     // --------------------------------------------------------------    
@@ -227,11 +230,13 @@ class Tracker
             throw new TrackerException("Cannot finish Tracker.  Not running.");
         }
 
-        $this->lastTick = new Tick($this, Tick::SUCCESS, $msg, $extraInfo, 0);
+        $tick = new Tick($this, Tick::SUCCESS, $msg, $extraInfo, 0);
         $this->status = self::FINISHED;
 
-        $this->dispatcher->dispatch(Events::TRACKER_FINISH, $this->lastTick);
-        return $this->lastTick->getReport();
+        $this->dispatcher->dispatch(Events::TRACKER_FINISH, $tick);
+
+        $this->lastTick = $tick;
+        return $tick->getReport();
     }
 
     // --------------------------------------------------------------    
@@ -249,10 +254,12 @@ class Tracker
             throw new TrackerException("Cannot abort Tracker.  Not running.");
         }
 
-        $this->lastTick = new Tick($this, Tick::FAIL, $msg, $extraInfo, 0);
+        $tick = new Tick($this, Tick::FAIL, $msg, $extraInfo, 0);
         $this->status = self::ABORTED;
 
-        $this->dispatcher->dispatch(Events::TRACKER_ABORT, $this->lastTick);
-        return $this->lastTick->getReport();
+        $this->dispatcher->dispatch(Events::TRACKER_ABORT, $tick);
+        
+        $this->lastTick = $tick;
+        return $tick->getReport();
     }
 }
