@@ -37,6 +37,21 @@ class Report implements ReportInterface
      */
     private $memPeakUsage;
 
+    /**
+     * @var float
+     */
+    private $itemTime;
+
+    /**
+     * @var float
+     */
+    private $maxTickTime;
+
+    /**
+     * @var float
+     */
+    private $minTickTime;
+
     // --------------------------------------------------------------
 
     /**
@@ -53,6 +68,20 @@ class Report implements ReportInterface
         // A snapshot of these values needs to be created upon report generation
         $this->memUsage     = memory_get_usage(true);
         $this->memPeakUsage = memory_get_peak_usage(true);
+
+        // Also, determining item time values needs to happen immediately
+        $this->item = ($this->tracker->getLastTick())
+            ? $this->tick->getTimestamp() - $this->tracker->getLastTick()->getTimestamp()
+            : $this->getTimeElapsed();
+
+        if ($this->tracker->getLastTick()) {
+            $this->minTickTime = min($this->getItemTime(), $this->tracker->getLastTick()->getReport()->getMinItemTime());
+            $this->maxTickTime = max($this->getItemTime(), $this->tracker->getLastTick()->getReport()->getMaxItemTime());
+        }
+        else {
+            $this->minTickTime = $this->minTickTime = $this->getItemTime();
+            $this->maxTickTime = $this->minTickTime = $this->getItemTime();
+        }
     }
 
     // ---------------------------------------------------------------
@@ -127,9 +156,7 @@ class Report implements ReportInterface
      */
     function getItemTime()
     {
-        return ($this->tracker->getLastTick())
-            ? $this->tick->getTimestamp() - $this->tracker->getLastTick()->getTimestamp()
-            : $this->getTimeElapsed();
+        return $this->itemTime;
     }
 
     /**
@@ -137,11 +164,7 @@ class Report implements ReportInterface
      */
     function getMaxItemTime()
     {
-        $lastTime = $this->tracker->getLastTick()
-            ? $this->tracker->getLastTick()->getReport()->getMaxItemTime()
-            : $this->getItemTime();
-
-        return max($this->getItemTime(), $lastTime);
+        return $this->maxTickTime;
     }
 
     /**
@@ -149,11 +172,7 @@ class Report implements ReportInterface
      */
     function getMinItemTime()
     {
-        $lastTime = $this->tracker->getLastTick()
-            ? $this->tracker->getLastTick()->getReport()->getMaxItemTime()
-            : $this->getItemTime();
-
-        return min($this->getItemTime(), $lastTime);
+        return $this->minTickTime;
     }
 
     /**
