@@ -14,7 +14,7 @@
  * ------------------------------------------------------------------
  */
 
-namespace TaskTracker\Listener;
+namespace TaskTracker\Subscriber;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace TaskTracker\Listener;
+namespace TaskTracker\Subscriber;
 
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;

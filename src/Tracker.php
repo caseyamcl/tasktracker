@@ -4,6 +4,7 @@ namespace TaskTracker;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * The Tracker class holds the state of a single process
@@ -54,6 +55,29 @@ class Tracker
     // --------------------------------------------------------------
 
     /**
+     * Build a task tracker using a list of subscribers
+     *
+     * @param array|EventSubscriberInterface[] $subscribers
+     * @param int                              $totalItems
+     * @return static
+     */
+    public static function build(array $subscribers = [], $totalItems = self::UNKNOWN)
+    {
+        // New object
+        $that = new static($totalItems);
+
+        // Register subscribers
+        foreach ($subscribers as $subscriber) {
+            return $that->getDispatcher()->addSubscriber($subscriber);
+        }
+
+        // Return it
+        return $that;
+    }
+
+    // --------------------------------------------------------------
+
+    /**
      * Constructor
      *
      * @param EventDispatcherInterface  $dispatcher
@@ -75,6 +99,16 @@ class Tracker
     public function getDispatcher()
     {
         return $this->dispatcher;
+    }
+
+    // --------------------------------------------------------------
+
+    /**
+     * @param EventSubscriberInterface $subscriber
+     */
+    public function addSubscriber(EventSubscriberInterface $subscriber)
+    {
+        $this->dispatcher->addSubscriber($subscriber);
     }
 
     // --------------------------------------------------------------

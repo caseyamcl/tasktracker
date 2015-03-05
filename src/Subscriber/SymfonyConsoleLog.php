@@ -14,7 +14,7 @@
  * ------------------------------------------------------------------
  */
 
-namespace TaskTracker\Listener;
+namespace TaskTracker\Subscriber;
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
