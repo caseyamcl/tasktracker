@@ -54,27 +54,35 @@ class Psr3Logger implements EventSubscriberInterface
 
     public function start(Tick $tick)
     {
-        $this->logger->info('Started', $tick->getReport()->toArray());
+        $this->logger->info($tick->getMessage() ?: 'Started', $tick->getReport()->toArray());
     }
+
+    // ---------------------------------------------------------------
 
     public function tick(Tick $tick)
     {
-        $this->logger->info(sprintf(
-           "%s %s/%s",
-            $tick->getMessage() ?: 'Tick',
+        $callback = ($tick->getStatus() == Tick::FAIL)
+            ? [$this->logger, 'warning']
+            : [$this->logger, 'info'];
+
+        $msg = sprintf(
+            "[%s/%s] %s",
             $tick->getReport()->getNumItemsProcessed(),
-            $tick->getReport()->getTotalItemCount()
-        ), $tick->getReport()->toArray());
+            $tick->getReport()->getTotalItemCount(),
+            $tick->getMessage() ?: 'Tick'
+        );
+
+        call_user_func($callback, $msg, $tick->getReport()->toArray());
     }
 
     public function finish(Tick $tick)
     {
-        $this->logger->info('Finished', $tick->getReport()->toArray());
+        $this->logger->info($tick->getMessage() ?: 'Finished', $tick->getReport()->toArray());
     }
 
     public function abort(Tick $tick)
     {
-        $this->logger->warning('Aborted', $tick->getReport()->toArray());
+        $this->logger->warning($tick->getMessage() ?: 'Aborted', $tick->getReport()->toArray());
     }
 
     // ---------------------------------------------------------------
