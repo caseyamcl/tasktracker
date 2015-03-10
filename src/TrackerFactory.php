@@ -21,6 +21,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Tracker Factory Service Class
  *
+ * Provides a service library for building many Tracker objects
+ * with the same set of subscribers
+ *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
 class TrackerFactory
@@ -28,34 +31,37 @@ class TrackerFactory
     /**
      * @var array|EventSubscriberInterface[]
      */
-    private $defaultListeners;
+    private $defaultSubscribers;
 
     // ---------------------------------------------------------------
 
     /**
      * Constructor
      *
-     * @param EventSubscriberInterface[] $defaultListeners
+     * @param EventSubscriberInterface[] $defaultSubscribers
      */
-    public function __construct(array $defaultListeners = [])
+    public function __construct(array $defaultSubscribers = [])
     {
-        $this->defaultListeners = $defaultListeners;
+        $this->defaultSubscribers = $defaultSubscribers;
     }
 
     // ---------------------------------------------------------------
 
     /**
-     * Get tracker for a task
+     * Build a new Tracker instance
      *
-     * @param int                               $numItems      The total number of items (or -1 for unknown)
-     * @param array|EventSubscriberInterface[]  $extraListeners  Optionally specify listeners, or will use defaults
+     * If $extraSubscribers is not empty, those subscribers will be added
+     * to the Tracker in addition to the defaults.
+     *
+     * @param int                               $numItems          The total number of items (or -1 for unknown)
+     * @param array|EventSubscriberInterface[]  $extraSubscribers  Optionally specify extra listeners for this Tracker instance
      * @return Tracker
      */
-    public function getTracker($numItems = Tracker::UNKNOWN, array $extraListeners = [])
+    public function buildTracker($numItems = Tracker::UNKNOWN, array $extraSubscribers = [])
     {
         $tracker = new Tracker($numItems);
 
-        foreach (array_merge($this->defaultListeners, $extraListeners) as $listener) {
+        foreach (array_merge($this->defaultSubscribers, $extraSubscribers) as $listener) {
             $tracker->getDispatcher()->addSubscriber($listener);
         }
 

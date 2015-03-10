@@ -30,6 +30,7 @@ use TaskTracker\Tick;
  */
 class SymfonyConsoleLog implements EventSubscriberInterface
 {
+    // Use traits to aid in output
     use BytesToHumanTrait;
     use TimeFormatterTrait;
 
@@ -73,7 +74,6 @@ class SymfonyConsoleLog implements EventSubscriberInterface
      * Write Log Line
      *
      * @param Tick $tick
-     * @param bool $isErr
      */
     public function writeLogLine(Tick $tick)
     {
@@ -132,16 +132,25 @@ class SymfonyConsoleLog implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
+    /**
+     * @param Tick $tick
+     */
     public function writeStartLine(Tick $tick)
     {
         $this->output->writeln($tick->getMessage() ?: "Starting . . .");
     }
 
+    /**
+     * @param Tick $tick
+     */
     public function writeFinishLine(Tick $tick)
     {
         $this->output->writeln($tick->getMessage() ?: ". . . Finished");
     }
 
+    /**
+     * @param Tick $tick
+     */
     public function writeAbortLine(Tick $tick)
     {
         $this->output->writeln('<error>' . $tick->getMessage() ?: 'Aborted!' . '</error>');

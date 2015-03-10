@@ -17,7 +17,7 @@
 namespace TaskTracker\Helper;
 
 /**
- * Bytes to Human Trait
+ * Converts bytes into a human-readable format
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
@@ -25,6 +25,8 @@ trait BytesToHumanTrait
 {
     /**
      * Convert bytes to a human-readable format
+     *
+     * For example (int) 1024 becomes (string) "1.02KB"
      *
      * @param int $bytes
      * @param int $decimals

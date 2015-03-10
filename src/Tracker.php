@@ -48,7 +48,7 @@ class Tracker
     private $lastTick;
 
     /**
-     * @var int
+     * @var int  One of the constants defined above
      */
     private $status;
 
@@ -56,6 +56,9 @@ class Tracker
 
     /**
      * Build a task tracker using a list of subscribers
+     *
+     * This is an alternate constructor, to be used when constructing a
+     * Tracker object using a collection of subscribers
      *
      * @param array|EventSubscriberInterface[] $subscribers
      * @param int                              $totalItems
@@ -104,6 +107,8 @@ class Tracker
     // --------------------------------------------------------------
 
     /**
+     * Add a subscriber to this Tracker instance
+     *
      * @param EventSubscriberInterface $subscriber
      */
     public function addSubscriber(EventSubscriberInterface $subscriber)
@@ -114,7 +119,8 @@ class Tracker
     // --------------------------------------------------------------
 
     /**
-     * Get number of total items (-1 for unknown)
+     * Get number of total items to be processed (-1 for unknown)
+     *
      * @return int
      */
     public function getNumTotalItems()
@@ -145,7 +151,7 @@ class Tracker
     // --------------------------------------------------------------
 
     /**
-     * Get the start time (returns NULL if not yet started)
+     * Get the start time in microseconds (returns NULL if not yet started)
      *
      * @return float|null
      */
@@ -220,7 +226,9 @@ class Tracker
     // --------------------------------------------------------------
 
     /**
-     * Build a report and send it to the tick method in the output handlers
+     * Indicate progress to the tracker
+     *
+     * Builds a report and send it to the tick method in the output handlers
      *
      * @param int    $status SUCCESS (default), SKIP, or FAIL
      * @param string $msg    Message to include for this report
@@ -252,7 +260,9 @@ class Tracker
     // --------------------------------------------------------------    
 
     /**
-     * Build a report and send it to the finish method in the output handlers
+     * Finish processing
+     *
+     * Builds a report and sends it to the finish method in the output handlers
      *
      * @param string $msg Optional message to include
      * @param array  $extraInfo
@@ -276,7 +286,9 @@ class Tracker
     // --------------------------------------------------------------    
 
     /**
-     * Build a report and send it to the abort method in the output handlers
+     * Abort processing
+     *
+     * Builds a reports and send it to the abort method in the output handlers
      *
      * @param string $msg Optional message to include
      * @param array  $extraInfo

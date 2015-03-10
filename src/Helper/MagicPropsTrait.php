@@ -17,7 +17,10 @@
 namespace TaskTracker\Helper;
 
 /**
- * Magic Properties Trait
+ * Adds magic methods to classes to provide direct access to
+ * any property that has a 'getX()' interface method
+ *
+ * Mainly for convenience
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */

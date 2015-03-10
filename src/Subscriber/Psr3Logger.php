@@ -35,6 +35,11 @@ class Psr3Logger implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
+    /**
+     * Constructor
+     *
+     * @param LoggerInterface $logger
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -43,6 +48,8 @@ class Psr3Logger implements EventSubscriberInterface
     // ---------------------------------------------------------------
 
     /**
+     * Geth the logger
+     *
      * @return LoggerInterface
      */
     public function getLogger()
@@ -52,6 +59,11 @@ class Psr3Logger implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
+    /**
+     * Start callback
+     *
+     * @param Tick $tick
+     */
     public function start(Tick $tick)
     {
         $this->logger->info($tick->getMessage() ?: 'Started', $tick->getReport()->toArray());
@@ -59,6 +71,11 @@ class Psr3Logger implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
+    /**
+     * Tick callback
+     *
+     * @param Tick $tick
+     */
     public function tick(Tick $tick)
     {
         $callback = ($tick->getStatus() == Tick::FAIL)
@@ -75,11 +92,25 @@ class Psr3Logger implements EventSubscriberInterface
         call_user_func($callback, $msg, $tick->getReport()->toArray());
     }
 
+    // ---------------------------------------------------------------
+
+    /**
+     * Finish callback
+     *
+     * @param Tick $tick
+     */
     public function finish(Tick $tick)
     {
         $this->logger->info($tick->getMessage() ?: 'Finished', $tick->getReport()->toArray());
     }
 
+    // ---------------------------------------------------------------
+
+    /**
+     * Abort callback
+     *
+     * @param Tick $tick
+     */
     public function abort(Tick $tick)
     {
         $this->logger->warning($tick->getMessage() ?: 'Aborted', $tick->getReport()->toArray());

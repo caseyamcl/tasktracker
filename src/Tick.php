@@ -75,7 +75,7 @@ class Tick extends Event implements TickInterface
     // ---------------------------------------------------------------
 
     /**
-     * Get message
+     * Returns the message associated with the Tick event
      *
      * @return string
      */
@@ -85,7 +85,8 @@ class Tick extends Event implements TickInterface
     }
 
     /**
-     * Get timestamp (microtime float)
+     * Returns the timestamp (microtime float) of the Tick event
+     *
      * @return float
      */
     public function getTimestamp()
@@ -94,7 +95,7 @@ class Tick extends Event implements TickInterface
     }
 
     /**
-     * Get status
+     * Returns the status (Tick::SUCCESS, Tick::FAIL, TICK::SKIP) of the Tick event
      *
      * @return int
      */
@@ -104,7 +105,7 @@ class Tick extends Event implements TickInterface
     }
 
     /**
-     * Get incrementBy (in numbers)
+     * Returns the number of increments associated with with the Tick event
      *
      * @return int
      */
@@ -114,6 +115,8 @@ class Tick extends Event implements TickInterface
     }
 
     /**
+     * Returns the report associated with the Tick event
+     *
      * @return Report
      */
     public function getReport()
@@ -122,6 +125,8 @@ class Tick extends Event implements TickInterface
     }
 
     /**
+     * Returns any extra information associated with the Tick event
+     *
      * @return array
      */
     public function getExtraInfo()

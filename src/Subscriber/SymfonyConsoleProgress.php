@@ -10,12 +10,13 @@ use TaskTracker\Helper\BytesToHumanTrait;
 use TaskTracker\Tick;
 
 /**
- * Symfony Console Progress Meter Listener
+ * Symfony Console Progress Bar Listener
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
 class SymfonyConsoleProgress implements EventSubscriberInterface
 {
+    // Use traits for prettier output
     use BytesToHumanTrait;
 
     // ---------------------------------------------------------------
@@ -26,7 +27,7 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
     private $output;
 
     /**
-     * @var ProgressBar|null
+     * @var ProgressBar|null  Set at runtime
      */
     private $progressBar;
 
@@ -59,6 +60,11 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
+    /**
+     * Start callback
+     *
+     * @param Tick $tick
+     */
     public function start(Tick $tick)
     {
         if ($tick->getMessage()) {
@@ -78,6 +84,11 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
+    /**
+     * Tick callback
+     *
+     * @param Tick $tick
+     */
     public function tick(Tick $tick)
     {
         $rpt = $tick->getReport();
@@ -106,7 +117,11 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
         $this->progressBar->advance($rpt->getTick()->getIncrementBy());
     }
 
-
+    /**
+     * Finish callback
+     *
+     * @param Tick $tick
+     */
     public function finish(Tick $tick)
     {
         $this->progressBar->finish();
@@ -117,11 +132,14 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
 
     }
 
+    /**
+     * Abort callback
+     *
+     * @param Tick $tick
+     */
     public function abort(Tick $tick)
     {
         $this->progressBar->clear();
         $this->output->writeln($tick->getMessage() ?: 'Aborted');
     }
 }
-
-/* EOF: SymfonyConsoleProgress.php */

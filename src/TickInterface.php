@@ -24,38 +24,44 @@ namespace TaskTracker;
 interface TickInterface
 {
     /**
-     * Get message
+     * Returns the message associated with the Tick event
      *
      * @return string
      */
     public function getMessage();
 
     /**
-     * Get timestamp (microtime float)
+     * Returns the timestamp (microtime float) of the Tick event
+     *
      * @return float
      */
     public function getTimestamp();
 
     /**
-     * Get status
+     * Returns the status (Tick::SUCCESS, Tick::FAIL, TICK::SKIP) of the Tick event
      *
      * @return int
      */
     public function getStatus();
 
     /**
-     * Get incrementBy (in numbers)
+     * Returns the number of increments associated with with the Tick event
      *
      * @return int
      */
     public function getIncrementBy();
 
+
     /**
+     * Returns the report associated with the Tick event
+     *
      * @return Report
      */
     public function getReport();
 
     /**
+     * Returns any extra information associated with the Tick event
+     *
      * @return array
      */
     public function getExtraInfo();
