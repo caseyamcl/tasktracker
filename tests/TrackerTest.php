@@ -16,6 +16,7 @@
 
 namespace TaskTracker\Test;
 
+use TaskTracker\Test\Fixture\ArrayRecordingSubscriber;
 use TaskTracker\Tick;
 use TaskTracker\Tracker;
 
@@ -187,8 +188,29 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
 
     public function testEventDispatch()
     {
-        $obj = $this->getTrackerObj();
+        $sub = new ArrayRecordingSubscriber();
 
+        $tracker = $this->getTrackerObj();
+        $tracker->addSubscriber($sub);
+        $tracker->tick(Tick::SUCCESS, 'msg1');
+        $tracker->tick(Tick::SUCCESS, 'msg2');
+
+        $this->assertEquals(2, count($sub->getItems()));
+        $this->assertEquals(['msg1', 'msg2'], $sub->getItems());
+    }
+
+    // ---------------------------------------------------------------
+
+    public function testBuildConstructorBuildsWithSelectedSubscribers()
+    {
+        $sub = new ArrayRecordingSubscriber();
+        $tracker = Tracker::build([$sub], 2);
+
+        $tracker->tick(Tick::SUCCESS, 'msg1');
+        $tracker->tick(Tick::SUCCESS, 'msg2');
+
+        $this->assertEquals(2, count($sub->getItems()));
+        $this->assertEquals(['msg1', 'msg2'], $sub->getItems());
     }
 
     // ---------------------------------------------------------------

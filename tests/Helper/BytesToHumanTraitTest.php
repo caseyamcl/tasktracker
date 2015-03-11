@@ -48,7 +48,8 @@ class BytesToHumanTraitTest extends \PHPUnit_Framework_TestCase
             [1688849860263936, 3, '1,688.850TB'],
             [208666624,        2, '208.67MB'   ],
             [46080,            0, '46KB'       ],
-            [101,              2, '101.00B'    ]
+            [101,              2, '101.00B'    ],
+            [0,                0, '0B'         ]
         );
     }
 }

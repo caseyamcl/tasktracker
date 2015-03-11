@@ -36,17 +36,18 @@ class TickTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPropertiesReturnsExpectedProperties()
     {
-        $obj = $this->getObject(Tick::SKIP, 'hi');
+        $obj = $this->getObject(Tick::SKIP, 'hi', ['foo' => 'bar']);
 
         $this->assertEquals('hi',                      $obj->getMessage());
         $this->assertEquals(Tick::SKIP,                $obj->getStatus());
+        $this->assertEquals(['foo' => 'bar'],          $obj->getExtraInfo());
         $this->assertInternalType('float',             $obj->getTimestamp());
         $this->assertInstanceOf('\TaskTracker\Report', $obj->getReport());
     }
 
     // ---------------------------------------------------------------
 
-    protected function getObject($status = Tick::SUCCESS, $message = '')
+    protected function getObject($status = Tick::SUCCESS, $message = '', array $extra = [])
     {
         $tracker = \Mockery::mock('\TaskTracker\Tracker');
         $tracker->shouldReceive('getStartTime')->andReturn(100);
@@ -54,6 +55,6 @@ class TickTest extends \PHPUnit_Framework_TestCase
         $tracker->shouldReceive('getLastTick')->andReturn(null);
         $tracker->shouldReceive('getNumProcessedItems')->andReturn(3);
 
-        return new Tick($tracker, $status, $message);
+        return new Tick($tracker, $status, $message, $extra);
     }
 }

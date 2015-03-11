@@ -48,7 +48,7 @@ trait BytesToHumanTrait
             }
         }
 
-        // Shouldn't make it here, but just in case
+        // Will make it here only if $bytes is < 1
         return number_format($bytes, $decimals) . 'B';
     }
 }

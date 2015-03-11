@@ -1,0 +1,69 @@
+<?php
+/**
+ * tasktracker
+ *
+ * @license ${LICENSE_LINK}
+ * @link ${PROJECT_URL_LINK}
+ * @version ${VERSION}
+ * @package ${PACKAGE_NAME}
+ * @author Casey McLaughlin <caseyamcl@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * ------------------------------------------------------------------
+ */
+
+namespace TaskTracker\Test\Fixture;
+
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use TaskTracker\Events;
+use TaskTracker\Tick;
+
+class ArrayRecordingSubscriber implements EventSubscriberInterface
+{
+    /**
+     * @var array
+     */
+    private $items;
+
+    // ---------------------------------------------------------------
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->items = array();
+    }
+
+    // ---------------------------------------------------------------
+
+    /**
+     * @param Tick $tick
+     */
+    public function addToArray(Tick $tick)
+    {
+        $this->items[] = $tick->getMessage();
+    }
+
+    // ---------------------------------------------------------------
+
+    /**
+     * @return array
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    // ---------------------------------------------------------------
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [ Events::TRACKER_TICK => 'addToArray' ];
+    }
+}

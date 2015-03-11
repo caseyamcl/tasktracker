@@ -71,7 +71,7 @@ class Tracker
 
         // Register subscribers
         foreach ($subscribers as $subscriber) {
-            return $that->getDispatcher()->addSubscriber($subscriber);
+            $that->addSubscriber($subscriber);
         }
 
         // Return it
