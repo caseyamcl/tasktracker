@@ -112,7 +112,7 @@ class SymfonyConsoleLog implements EventSubscriberInterface
             );
         }
 
-        // If very verbose, add momory usage
+        // If very verbose, add memory usage
         if ($this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
             $lineSegs[] = sprintf("{%s/%s}",
                 $this->bytesToHuman($tick->getReport()->getMemUsage()),
@@ -123,7 +123,7 @@ class SymfonyConsoleLog implements EventSubscriberInterface
         // Add message
         $lineSegs[] = $tick->getMessage() ?: sprintf(
             "Processing item %s",
-            number_format($tick->getReport()->getTotalItemCount(), 0)
+            number_format($tick->getReport()->getNumItemsProcessed(), 0)
         );
 
         // Output it!
@@ -153,6 +153,6 @@ class SymfonyConsoleLog implements EventSubscriberInterface
      */
     public function writeAbortLine(Tick $tick)
     {
-        $this->output->writeln('<error>' . $tick->getMessage() ?: 'Aborted!' . '</error>');
+        $this->output->writeln('<error>' . ($tick->getMessage() ?: 'Aborted!') . '</error>');
     }
 }

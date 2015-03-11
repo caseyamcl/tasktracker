@@ -1,5 +1,6 @@
 <?php
 
+use TaskTracker\Test\Fixture\TickBuilderTrait;
 use TaskTracker\Tick;
 
 /**
@@ -19,9 +20,13 @@ use TaskTracker\Tick;
 
 class TickTest extends \PHPUnit_Framework_TestCase
 {
+    use TickBuilderTrait;
+
+    // ---------------------------------------------------------------
+
     public function testInstantiateTickSucceeds()
     {
-        $obj =$this->getObject();
+        $obj =$this->getTick();
         $this->assertInstanceOf('\TaskTracker\Tick', $obj);
     }
 
@@ -30,14 +35,14 @@ class TickTest extends \PHPUnit_Framework_TestCase
     public function testInstantiateWithInvalidStatusThrowsException()
     {
         $this->setExpectedException('\InvalidArgumentException');
-        $obj = $this->getObject(3);
+        $obj = $this->getTick(3);
     }
 
     // ---------------------------------------------------------------
 
     public function testGetPropertiesReturnsExpectedProperties()
     {
-        $obj = $this->getObject(Tick::SKIP, 'hi', ['foo' => 'bar']);
+        $obj = $this->getTick(Tick::SKIP, 'hi', ['foo' => 'bar']);
 
         $this->assertEquals('hi',                      $obj->getMessage());
         $this->assertEquals(Tick::SKIP,                $obj->getStatus());
@@ -46,16 +51,4 @@ class TickTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\TaskTracker\Report', $obj->getReport());
     }
 
-    // ---------------------------------------------------------------
-
-    protected function getObject($status = Tick::SUCCESS, $message = '', array $extra = [])
-    {
-        $tracker = \Mockery::mock('\TaskTracker\Tracker');
-        $tracker->shouldReceive('getStartTime')->andReturn(100);
-        $tracker->shouldReceive('getNumTotalItems')->andReturn(25);
-        $tracker->shouldReceive('getLastTick')->andReturn(null);
-        $tracker->shouldReceive('getNumProcessedItems')->andReturn(3);
-
-        return new Tick($tracker, $status, $message, $extra);
-    }
 }
