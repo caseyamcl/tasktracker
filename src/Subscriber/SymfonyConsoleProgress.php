@@ -79,7 +79,6 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
         );
 
         $this->progressBar->start();
-        $this->progressBar->setProgress(0);
     }
 
     // ---------------------------------------------------------------
@@ -93,6 +92,9 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
     {
         $rpt = $tick->getReport();
 
+        if ( ! $this->progressBar) {
+            $this->start($tick);
+        }
 
         $msgSegs = [$tick->getMessage()];
 
@@ -114,7 +116,8 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
         }
 
         $this->progressBar->setMessage(implode(' | ', $msgSegs));
-        $this->progressBar->advance($rpt->getTick()->getIncrementBy());
+        $this->progressBar->setProgress($rpt->getNumItemsProcessed());
+        //$this->progressBar->advance($rpt->getTick()->getIncrementBy());
     }
 
     /**
