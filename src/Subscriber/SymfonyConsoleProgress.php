@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * Tack Tracker - A library for tracking long-running task progress
+ *
+ * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/caseyamcl/tasktracker
+ * @version 2.0
+ * @package caseyamcl/tasktracker
+ * @author Casey McLaughlin <caseyamcl@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * ------------------------------------------------------------------
+ */
+
 namespace TaskTracker\Subscriber;
 
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -10,7 +25,7 @@ use TaskTracker\Helper\BytesToHumanTrait;
 use TaskTracker\Tick;
 
 /**
- * Symfony Console Progress Bar Listener
+ * Symfony Console Progress Bar Task Tracker Subscriber
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */

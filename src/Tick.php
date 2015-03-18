@@ -1,11 +1,28 @@
 <?php
 
+/**
+ * Tack Tracker - A library for tracking long-running task progress
+ *
+ * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/caseyamcl/tasktracker
+ * @version 2.0
+ * @package caseyamcl/tasktracker
+ * @author Casey McLaughlin <caseyamcl@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * ------------------------------------------------------------------
+ */
+
 namespace TaskTracker;
 
 use InvalidArgumentException;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
+ * Task Tracker Tick
+ *
  * Represents a progress tick
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>

@@ -1,11 +1,12 @@
 <?php
+
 /**
- * tasktracker
+ * Tack Tracker - A library for tracking long-running task progress
  *
- * @license ${LICENSE_LINK}
- * @link ${PROJECT_URL_LINK}
- * @version ${VERSION}
- * @package ${PACKAGE_NAME}
+ * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/caseyamcl/tasktracker
+ * @version 2.0
+ * @package caseyamcl/tasktracker
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -22,7 +23,7 @@ use TaskTracker\Events;
 use TaskTracker\Tick;
 
 /**
- * PSR3-Compatible Logger Output Listener
+ * PSR3-Compatible Logger Task Tracker Subscriber
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */

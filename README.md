@@ -26,14 +26,14 @@ Tracker object, you can accomplish both of these goals:
     use TaskTracker\Tracker;
     use TaskTracker\Tick;
 
-    // Setup listeners
+    // Setup subscribers
     $subscribers = [
         new SymfonyConsoleProgress(new ConsoleOutput()),
         new Psr3Logger(new MonologLogger())
     ];
     
     // Setup a tracker for a job with 100 items
-    $tracker = TaskTracker::build(100, $subscribers);
+    $tracker = Tracker::build(100, $subscribers);
     
     $tracker->start("Let's go");
     for ($i = 0; $i < 100; $i++) {
@@ -107,14 +107,18 @@ You can also supply an optional message:
     $tracker->tick(Tick::SUCCESS, 'Things are going well.');
     $tracker->tick(Tick::FAIL,    'Crud.  Something went wrong');
     $tracker->tick(Tick::SKIP,    'Skipping this record for whatever reason');
+
+You can add custom data to the Tick in the form of an array:
+
+    $tracker->tick(Tick::SUCCESS, 'Things are going well.', ['foo' => 'bar', 'baz' => 'biz]);
     
 And, you can increment by more than one item at a time:
 
     // Increment by 5 items
-    $tracker->tick(Tick::SUCCESS, '', 5);
+    $tracker->tick(Tick::SUCCESS, '', [], 5);
     
     // Increment by 3 items (skipped) with a message
-    $trakcer->tick(Tick::FAIL, 'Something went wrong', 3);
+    $trakcer->tick(Tick::FAIL, 'Something went wrong', [], 3);
 
 When you are done, call the `Tracker::finish()` method:
 
@@ -147,13 +151,11 @@ The class contains a few helper methods, too:
 ### Subscribers
 
 The `Tracker` class isn't very useful on its own without event subscribers to listen for
-tracker tick events.  There are a few built-in listeners:
+tracker tick events.  There are a few subscribers bundled with this library:
 
-* `TaskTracker\Listener\Psr3Logger` - Logs Tracker events to any [PSR-3 Logger](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
-* `TaskTracker\Listener\SymfonyConsoleLog` - Logs Tracker events to a Symfony
-   console, each event on its own line.
-* `TaskTracker\Listener\SymfonyConsoleProgress` - Logs tracker events to a Symfony
-   console progress bar indicator.
+* `TaskTracker\Subscriber\Psr3Logger` - Logs Tracker events to any [PSR-3 Logger](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
+* `TaskTracker\Subscriber\SymfonyConsoleLog` - Logs Tracker events to a Symfony console, each event on its own line.
+* `TaskTracker\Subscriber\SymfonyConsoleProgress` - Logs tracker events to a Symfony console progress bar indicator.
 
 You can add event subscribers to the Tracker by calling the `Tracker::addSubscriber()` method:
 
@@ -165,15 +167,17 @@ If you know what subscribers you will use ahead of time, you can use the `Tracke
     $subscribers = [new SymfonyConsoleLog($output), new SomeOtherSubscriber()];
     $tracker = Tracker::build(100, $subscribers);
 
-As an example example, suppose you have a Symfony Console Command, and
-you want to show a progress bar and also log events as they occur:
+As an example, suppose you are creating a Symfony Console Command, and
+you want to show a progress bar for some task and also log events as they occur:
 
     use TaskTracker\Tracker;
     use TaskTracker\Tick;
     use TaskTracker\Subscriber\SymfonyConsoleProgress;
-
     use Symfony\Component\Console\Command\Command;
     
+    /**
+     * My Symfony Command
+     */
     class MyCommand extends Command
     {
         protected function configure()
@@ -202,7 +206,7 @@ you want to show a progress bar and also log events as they occur:
             // be called upon the first Tick
             $tracker->start("Let's go!");
             
-            // The SymfonyConsoleProgress listener will output a progress bar
+            // The SymfonyConsoleProgress listener will output a progress bar while the logger will log events
             for ($i = 0; $i < 10; $i++) {
                 $tracker->tick(\Tick::SUCCESS, "On item: " . $i);
                 sleep(1);
@@ -221,15 +225,15 @@ you want to show a progress bar and also log events as they occur:
 TaskTracker uses the [Symfony EventDispatcher](http://symfony.com/doc/current/components/event_dispatcher/introduction.html)
 library, so any Symfony-compatible event listener can be used.
 
-There are four events:
+There are four events you can listen for:
 
 * `TaskTracker\Events::TRACKER_START`
 * `TaskTracker\Events::TRACKER_TICK`
 * `TaskTracker\Events::TRACKER_FINISH`
 * `TaskTracker\Events::TRACKER_ABORT`
 
-All four events dispatch an instance of the `TaskTracker\Task` class.  Your subscribers/listeners
-should accept those as parameters:
+All four events dispatch an instance of the `TaskTracker\Tick` class.  Your subscribers/listeners
+should accept an object of that class as its parameter:
 
     use Symfony\Component\EventDispatcher\EventSubscriberInterface;
     use TaskTracker\Tick;
@@ -255,6 +259,29 @@ should accept those as parameters:
 ### Reports
 
 Every Tracker event emits a `\Tracker\Report` object with a snapshot of the process and some system information
-present at the point in time that the event occurred.
+present at the point in time that the event occurred:
 
-TODO: Document reports!
+    $report = $tracker->tick();
+   
+    $report->getTimeStarted();
+    $report->getTotalItemCount();
+    $report->getTick();
+    $report->getNumItemsProcessed();
+    $report->getTimeElapsed();
+    $report->getNumItemsSuccess();
+    $report->getNumItemsFail();
+    $report->getNumItemsSkip();
+    $report->getItemTime();
+    $report->getMaxItemTime();
+    $report->getMinItemTime();
+    $report->getAvgItemTime();
+    $report->getMemUsage();
+    $report->getMemPeakUsage();
+    $report->getMessage();
+    $report->getTimestamp();
+    $report->getStatus();
+    $report->getIncrementBy();
+    $report->getReport();
+    $report->getExtraInfo();
+
+In your subscribers, you can access the report from the `Tick` object by calling `Tick::getReport()`.

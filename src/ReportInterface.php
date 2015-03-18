@@ -1,11 +1,12 @@
 <?php
+
 /**
- * tasktracker
+ * Tack Tracker - A library for tracking long-running task progress
  *
- * @license ${LICENSE_LINK}
- * @link ${PROJECT_URL_LINK}
- * @version ${VERSION}
- * @package ${PACKAGE_NAME}
+ * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/caseyamcl/tasktracker
+ * @version 2.0
+ * @package caseyamcl/tasktracker
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -17,13 +18,12 @@
 namespace TaskTracker;
 
 /**
- * Report Interface
+ * Task Tracker Report Interface
  *
  * @package TaskTracker
  */
 interface ReportInterface extends TickInterface
 {
-
     /**
      * @return float
      */
@@ -83,4 +83,14 @@ interface ReportInterface extends TickInterface
      * @return float
      */
     function getAvgItemTime();
+
+    /**
+     * @return int
+     */
+    function getMemUsage();
+
+    /**
+     * @return int
+     */
+    function getMemPeakUsage();
 }

@@ -1,11 +1,12 @@
 <?php
+
 /**
- * tasktracker
+ * Tack Tracker - A library for tracking long-running task progress
  *
- * @license ${LICENSE_LINK}
- * @link ${PROJECT_URL_LINK}
- * @version ${VERSION}
- * @package ${PACKAGE_NAME}
+ * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/caseyamcl/tasktracker
+ * @version 2.0
+ * @package caseyamcl/tasktracker
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -24,7 +25,7 @@ use TaskTracker\Helper\TimeFormatterTrait;
 use TaskTracker\Tick;
 
 /**
- * Symfony Console Log
+ * Symfony Console Log Task Tracker Subscriber
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
