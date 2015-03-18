@@ -130,7 +130,8 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
         $this->progressBar->finish();
 
         if ($tick->getMessage()) {
-            $this->output->writeln($tick->getMessage());
+
+            $this->output->writeln(PHP_EOL . $tick->getMessage());
         }
 
     }

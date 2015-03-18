@@ -21,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use TaskTracker\Events;
 use TaskTracker\Subscriber\SymfonyConsoleProgress;
 use TaskTracker\Test\Fixture\TickBuilderTrait;
+use TaskTracker\Tick;
 
 /**
  * Symfony Console Progress Test
@@ -67,14 +68,44 @@ class SymfonyConsoleProgressTest extends \PHPUnit_Framework_TestCase
 
     // ---------------------------------------------------------------
 
+    public function testFinishMessage()
+    {
+        $output = new BufferedOutput();
+        $obj = new SymfonyConsoleProgress($output);
+
+        $obj->start($this->getTick());
+        $output->fetch();
+        $obj->finish($this->getTick(Tick::SUCCESS, 'Done'));
+
+        $expected = "25/25 [============================] 100%\nDone";
+        $this->assertEquals(trim($expected), trim($output->fetch()));
+    }
+
+    // ---------------------------------------------------------------
+
+    public function testAbortMessage()
+    {
+        $output = new BufferedOutput();
+        $obj = new SymfonyConsoleProgress($output);
+
+        $obj->start($this->getTick());
+        $output->fetch();
+        $obj->abort($this->getTick());
+
+        $this->assertEquals('Aborted', trim($output->fetch()));
+    }
+
+    // ---------------------------------------------------------------
+
     public function testTickStandardVerbosity()
     {
         $output = new BufferedOutput();
         $obj = new SymfonyConsoleProgress($output);
 
-        $obj->tick($this->getTick());
+        $obj->tick($this->getTick(Tick::SUCCESS, 'Test Message'));
 
-        var_dump($output->fetch());
+        $expected = "Test Message\n  0/25 [>---------------------------]   0%\n  3/25 [===>------------------------]  12%";
+        $this->assertEquals(trim($expected), trim($output->fetch()));
     }
 
     // ---------------------------------------------------------------
@@ -86,9 +117,10 @@ class SymfonyConsoleProgressTest extends \PHPUnit_Framework_TestCase
 
         $obj = new SymfonyConsoleProgress($output);
 
-        $obj->tick($this->getTick());
+        $obj->tick($this->getTick(Tick::SUCCESS, 'Test Message'));
 
-        var_dump($output->fetch());
+        $expected = "Test Message\n  0/25 [>---------------------------]   0%  1 sec\n  3/25 [===>------------------------]  12%  1 sec";
+        $this->assertEquals(trim($expected), trim($output->fetch()));
     }
 
     // ---------------------------------------------------------------
@@ -100,9 +132,10 @@ class SymfonyConsoleProgressTest extends \PHPUnit_Framework_TestCase
 
         $obj = new SymfonyConsoleProgress($output);
 
-        $obj->tick($this->getTick());
+        $obj->tick($this->getTick(Tick::SUCCESS, 'Test Message'));
 
-        var_dump($output->fetch());
+        $expected = "Test Message\n  0/25 [>---------------------------]   0%  1 sec/1 sec \n  3/25 [===>------------------------]  12%  1 sec/1 sec";
+        $this->assertEquals(trim($expected), trim($output->fetch()));
     }
 
 }
