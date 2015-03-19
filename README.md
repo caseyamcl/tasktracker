@@ -22,6 +22,7 @@ For example, you may want to display a progress bar on the console during execut
 send periodic snapshots of the state of the system to Monolog while a task is executing.  Using a single
 Tracker object, you can accomplish both of these goals:
 
+```php
     use Symfony\Console\Output\ConsoleOutput;
     use TaskTracker\Subscriber\SymfonyConsoleProgress
     use Monolog\Logger as MonologLogger;
@@ -43,7 +44,7 @@ Tracker object, you can accomplish both of these goals:
         $tracker->tick();
     }
     $tracker->finish("All done");
-
+```
 
 ## Installation
 
