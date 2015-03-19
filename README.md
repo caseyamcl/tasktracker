@@ -1,16 +1,18 @@
 Task Tracker
 ============
 
-[![Build Status](https://travis-ci.org/caseyamcl/tasktracker.png)](https://travis-ci.org/caseyamcl/tasktracker)
+**A library for tracking long-running tasks in PHP (when a simple progress bar isn't enough)**
 
-A library for tracking long-running tasks in PHP (when a simple progress bar isn't enough).
+[![Latest Version](https://img.shields.io/github/release/caseyamcl/tasktracker.svg?style=flat-square?style=flat-square)](https://github.com/caseyamcl/tasktracker/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Build Status](https://travis-ci.org/caseyamcl/tasktracker.png)](https://travis-ci.org/caseyamcl/tasktracker)
 
 **At a Glance**:
 
 * Reports on memory usage and a number of progress statistics during long-running tasks
 * Useful for long-running processes where a large number of small jobs are executed
 * Event-driven architecture using the [Symfony Event-Dispatcher Component](http://symfony.com/doc/current/components/event_dispatcher/introduction.html)
-  - Can report on task progress to any [EventSubscriberInterface](http://symfony.com/doc/current/components/event_dispatcher/introduction.html#using-event-subscribers) objects
+  - Can report on task progress to any [EventSubscriberInterface](http://symfony.com/doc/current/components/event_dispatcher/introduction.html#using-event-subscribers)
 * Provides built-in utilities for reporting task progress:
   - Symfony Console Progress Bar
   - Symfony Console Running Log of Task Messages
@@ -47,13 +49,7 @@ Tracker object, you can accomplish both of these goals:
 
 Install via Composer:
 
-1. Modify your _composer.json_ file:
-
-        require {
-            "caseyamcl/tasktracker": "~2.0"
-        }
-        
-2. Run `composer update`
+    composer require caseyamcl/tasktracker:~2.0
 
 Install manually:
 
@@ -86,7 +82,7 @@ inject your own if you need to:
 To start tracking, simply call the `Tracker::start()` method:
 
     // Start the tracker
-    $tracker->start('optional message');
+    $tracker->start('optional starting message');
 
 For every element you process, call the `Tracker::tick()` method until you
 are done:
@@ -117,7 +113,7 @@ And, you can increment by more than one item at a time:
     // Increment by 5 items
     $tracker->tick(Tick::SUCCESS, '', [], 5);
     
-    // Increment by 3 items (skipped) with a message
+    // Three items failed
     $trakcer->tick(Tick::FAIL, 'Something went wrong', [], 3);
 
 When you are done, call the `Tracker::finish()` method:
@@ -133,10 +129,10 @@ The class contains a few helper methods, too:
     // Have we started processing yet?
     $tracker->isRunning();
     
-    // Get the last tick, which contains all kinds of information
+    // Get the last tick (instance of \Tracker\Tick class)
     $tracker->getLastTick();
     
-    // Get the status of the process as an int (see class constants)
+    // Get the status of the process as an int (Tracker::NOT_STARTED, Tracker::RUNNING, Tracker::FINISHED, or Tracker::ABORTED)
     $tracker->getStatus();
     
     // Get the number of items processed thus far
@@ -145,7 +141,7 @@ The class contains a few helper methods, too:
     // Get only the number of failed items (works with SUCCESS and SKIP too)
     $tracker->getNumProcessedItems(Tick::FAIL);
     
-    // Get the time started
+    // Get the time started (in microseconds)
     $tracker->getStartTime();
        
 ### Subscribers
@@ -166,6 +162,8 @@ If you know what subscribers you will use ahead of time, you can use the `Tracke
  
     $subscribers = [new SymfonyConsoleLog($output), new SomeOtherSubscriber()];
     $tracker = Tracker::build(100, $subscribers);
+
+### Example
 
 As an example, suppose you are creating a Symfony Console Command, and
 you want to show a progress bar for some task and also log events as they occur:
@@ -220,7 +218,7 @@ you want to show a progress bar for some task and also log events as they occur:
         }
     }
 
-### Custom Listeners
+### Custom Subscribers
 
 TaskTracker uses the [Symfony EventDispatcher](http://symfony.com/doc/current/components/event_dispatcher/introduction.html)
 library, so any Symfony-compatible event listener can be used.
@@ -238,6 +236,9 @@ should accept an object of that class as its parameter:
     use Symfony\Component\EventDispatcher\EventSubscriberInterface;
     use TaskTracker\Tick;
     
+    /**
+     * Listen for Tracker Events
+     */
     class MyEventSubscriber implements EventSubscriberInterface
     {
          public static function getSubscribedEvents()
