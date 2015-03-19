@@ -24,7 +24,7 @@ Tracker object, you can accomplish both of these goals:
 
 ```php
     use Symfony\Console\Output\ConsoleOutput;
-    use TaskTracker\Subscriber\SymfonyConsoleProgress
+    use TaskTracker\Subscriber\SymfonyConsoleProgress;
     use Monolog\Logger as MonologLogger;
     use TaskTracker\Tracker;
     use TaskTracker\Tick;
@@ -169,6 +169,7 @@ If you know what subscribers you will use ahead of time, you can use the `Tracke
 As an example, suppose you are creating a Symfony Console Command, and
 you want to show a progress bar for some task and also log events as they occur:
 
+```php
     use TaskTracker\Tracker;
     use TaskTracker\Tick;
     use TaskTracker\Subscriber\SymfonyConsoleProgress;
@@ -218,6 +219,7 @@ you want to show a progress bar for some task and also log events as they occur:
             $output->writeln(sprintf("All Done!  <info>%s</info> items processed", $report->getNumTotalItems()));
         }
     }
+```
 
 ### Custom Subscribers
 
@@ -234,6 +236,7 @@ There are four events you can listen for:
 All four events dispatch an instance of the `TaskTracker\Tick` class.  Your subscribers/listeners
 should accept an object of that class as its parameter:
 
+```php
     use Symfony\Component\EventDispatcher\EventSubscriberInterface;
     use TaskTracker\Tick;
     
@@ -257,12 +260,14 @@ should accept an object of that class as its parameter:
              var_dump($tickEvent->getReport()->toArray());
          }
     }
+```
 
 ### Reports
 
 Every Tracker event emits a `\Tracker\Report` object with a snapshot of the process and some system information
 present at the point in time that the event occurred:
 
+```php
     $report = $tracker->tick();
    
     $report->getTimeStarted();
@@ -285,5 +290,6 @@ present at the point in time that the event occurred:
     $report->getIncrementBy();
     $report->getReport();
     $report->getExtraInfo();
+```
 
 In your subscribers, you can access the report from the `Tick` object by calling `Tick::getReport()`.
