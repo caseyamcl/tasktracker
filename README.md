@@ -23,7 +23,6 @@ send periodic snapshots of the state of the system to Monolog while a task is ex
 Tracker object, you can accomplish both of these goals:
 
 ```php
-
 use TaskTracker\Tracker,
     TaskTracker\Tick;
 use TaskTracker\Subscriber\SymfonyConsoleProgress,
