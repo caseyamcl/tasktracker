@@ -23,27 +23,27 @@ send periodic snapshots of the state of the system to Monolog while a task is ex
 Tracker object, you can accomplish both of these goals:
 
 ```php
-    use Symfony\Console\Output\ConsoleOutput;
-    use TaskTracker\Subscriber\SymfonyConsoleProgress;
-    use Monolog\Logger as MonologLogger;
-    use TaskTracker\Tracker;
-    use TaskTracker\Tick;
+use Symfony\Console\Output\ConsoleOutput;
+use TaskTracker\Subscriber\SymfonyConsoleProgress;
+use Monolog\Logger as MonologLogger;
+use TaskTracker\Tracker;
+use TaskTracker\Tick;
 
-    // Setup subscribers
-    $subscribers = [
-        new SymfonyConsoleProgress(new ConsoleOutput()),
-        new Psr3Logger(new MonologLogger())
-    ];
-    
-    // Setup a tracker for a job with 100 items
-    $tracker = Tracker::build(100, $subscribers);
-    
-    $tracker->start("Let's go");
-    for ($i = 0; $i < 100; $i++) {
-        // Do some work of some sort...
-        $tracker->tick();
-    }
-    $tracker->finish("All done");
+// Setup subscribers
+$subscribers = [
+    new SymfonyConsoleProgress(new ConsoleOutput()),
+    new Psr3Logger(new MonologLogger())
+];
+
+// Setup a tracker for a job with 100 items
+$tracker = Tracker::build(100, $subscribers);
+
+$tracker->start("Let's go");
+for ($i = 0; $i < 100; $i++) {
+    // Do some work of some sort...
+    $tracker->tick();
+}
+$tracker->finish("All done");
 ```
 
 ## Installation
@@ -170,55 +170,55 @@ As an example, suppose you are creating a Symfony Console Command, and
 you want to show a progress bar for some task and also log events as they occur:
 
 ```php
-    use TaskTracker\Tracker;
-    use TaskTracker\Tick;
-    use TaskTracker\Subscriber\SymfonyConsoleProgress;
-    use Symfony\Component\Console\Command\Command;
-    
-    /**
-     * My Symfony Command
-     */
-    class MyCommand extends Command
+use TaskTracker\Tracker;
+use TaskTracker\Tick;
+use TaskTracker\Subscriber\SymfonyConsoleProgress;
+use Symfony\Component\Console\Command\Command;
+
+/**
+ * My Symfony Command
+ */
+class MyCommand extends Command
+{
+    protected function configure()
     {
-        protected function configure()
-        {
-            $this->setName('example');
-            $this->setDescription("Demonstrate TaskTracker");
-        }
-       
-        protected function execute(InputInterface $input, OutputInterface $output)
-        {
-            $numItems = 10;
-        
-            // Build Task Tracker with Symfony Console Progress Bar subscriber
-            $tracker = Tracker::build([new SymfonyConsoleProgress($output)], $numItems);
-            
-            // Add a Monolog Listener after Tracker construction
-            $monolog = new \Monolog\Logger(/* some handlers */);
-            $tracker->addSubscriber(new Psr3Logger($monolog));
-            
-            // You can also add Event Listeners directly
-            $tracker->getDispatcher()->addListener(\Tracker\Events::TRACKER_TICK, function(\Tracker\Tick $tick) {
-                // do something...
-            });
-            
-            // Tracker::start() is technically optional; if not called, it will automatically
-            // be called upon the first Tick
-            $tracker->start("Let's go!");
-            
-            // The SymfonyConsoleProgress listener will output a progress bar while the logger will log events
-            for ($i = 0; $i < 10; $i++) {
-                $tracker->tick(\Tick::SUCCESS, "On item: " . $i);
-                sleep(1);
-            }
-            
-            // Tracker::start(), Tracker::tick(), Tracker::abort(), and Tracker::finish() all return
-            // a \Tracker\Report object.
-            $report = $tracker->finish('All done!');
-            
-            $output->writeln(sprintf("All Done!  <info>%s</info> items processed", $report->getNumTotalItems()));
-        }
+        $this->setName('example');
+        $this->setDescription("Demonstrate TaskTracker");
     }
+   
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $numItems = 10;
+    
+        // Build Task Tracker with Symfony Console Progress Bar subscriber
+        $tracker = Tracker::build([new SymfonyConsoleProgress($output)], $numItems);
+        
+        // Add a Monolog Listener after Tracker construction
+        $monolog = new \Monolog\Logger(/* some handlers */);
+        $tracker->addSubscriber(new Psr3Logger($monolog));
+        
+        // You can also add Event Listeners directly
+        $tracker->getDispatcher()->addListener(\Tracker\Events::TRACKER_TICK, function(\Tracker\Tick $tick) {
+            // do something...
+        });
+        
+        // Tracker::start() is technically optional; if not called, it will automatically
+        // be called upon the first Tick
+        $tracker->start("Let's go!");
+        
+        // The SymfonyConsoleProgress listener will output a progress bar while the logger will log events
+        for ($i = 0; $i < 10; $i++) {
+            $tracker->tick(\Tick::SUCCESS, "On item: " . $i);
+            sleep(1);
+        }
+        
+        // Tracker::start(), Tracker::tick(), Tracker::abort(), and Tracker::finish() all return
+        // a \Tracker\Report object.
+        $report = $tracker->finish('All done!');
+        
+        $output->writeln(sprintf("All Done!  <info>%s</info> items processed", $report->getNumTotalItems()));
+    }
+}
 ```
 
 ### Custom Subscribers
@@ -237,29 +237,29 @@ All four events dispatch an instance of the `TaskTracker\Tick` class.  Your subs
 should accept an object of that class as its parameter:
 
 ```php
-    use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-    use TaskTracker\Tick;
-    
-    /**
-     * Listen for Tracker Events
-     */
-    class MyEventSubscriber implements EventSubscriberInterface
-    {
-         public static function getSubscribedEvents()
-         {
-             return [
-                 TaskTracker\Events::TRACKER_START  => 'handle',
-                 TaskTracker\Events::TRACKER_TICK   => 'handle',
-                 TaskTracker\Events::TRACKER_FINISH => 'handle',
-             ];
-         }
-         
-         public static function handle(Tick $tickEvent)
-         {
-             // See all of the information about the progress of that tick
-             var_dump($tickEvent->getReport()->toArray());
-         }
-    }
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use TaskTracker\Tick;
+
+/**
+ * Listen for Tracker Events
+ */
+class MyEventSubscriber implements EventSubscriberInterface
+{
+     public static function getSubscribedEvents()
+     {
+         return [
+             TaskTracker\Events::TRACKER_START  => 'handle',
+             TaskTracker\Events::TRACKER_TICK   => 'handle',
+             TaskTracker\Events::TRACKER_FINISH => 'handle',
+         ];
+     }
+     
+     public static function handle(Tick $tickEvent)
+     {
+         // See all of the information about the progress of that tick
+         var_dump($tickEvent->getReport()->toArray());
+     }
+}
 ```
 
 ### Reports
@@ -268,28 +268,28 @@ Every Tracker event emits a `\Tracker\Report` object with a snapshot of the proc
 present at the point in time that the event occurred:
 
 ```php
-    $report = $tracker->tick();
-   
-    $report->getTimeStarted();
-    $report->getTotalItemCount();
-    $report->getTick();
-    $report->getNumItemsProcessed();
-    $report->getTimeElapsed();
-    $report->getNumItemsSuccess();
-    $report->getNumItemsFail();
-    $report->getNumItemsSkip();
-    $report->getItemTime();
-    $report->getMaxItemTime();
-    $report->getMinItemTime();
-    $report->getAvgItemTime();
-    $report->getMemUsage();
-    $report->getMemPeakUsage();
-    $report->getMessage();
-    $report->getTimestamp();
-    $report->getStatus();
-    $report->getIncrementBy();
-    $report->getReport();
-    $report->getExtraInfo();
+$report = $tracker->tick();
+
+$report->getTimeStarted();
+$report->getTotalItemCount();
+$report->getTick();
+$report->getNumItemsProcessed();
+$report->getTimeElapsed();
+$report->getNumItemsSuccess();
+$report->getNumItemsFail();
+$report->getNumItemsSkip();
+$report->getItemTime();
+$report->getMaxItemTime();
+$report->getMinItemTime();
+$report->getAvgItemTime();
+$report->getMemUsage();
+$report->getMemPeakUsage();
+$report->getMessage();
+$report->getTimestamp();
+$report->getStatus();
+$report->getIncrementBy();
+$report->getReport();
+$report->getExtraInfo();
 ```
 
 In your subscribers, you can access the report from the `Tick` object by calling `Tick::getReport()`.
