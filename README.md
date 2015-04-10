@@ -6,6 +6,7 @@ Task Tracker
 [![Latest Version](https://img.shields.io/github/release/caseyamcl/tasktracker.svg?style=flat-square?style=flat-square)](https://github.com/caseyamcl/tasktracker/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://travis-ci.org/caseyamcl/tasktracker.png)](https://travis-ci.org/caseyamcl/tasktracker)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/caseyamcl/tasktracker/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/caseyamcl/tasktracker/?branch=master)
 
 **At a Glance**:
 
