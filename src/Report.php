@@ -87,7 +87,7 @@ class Report implements ReportInterface
         $this->memPeakUsage = memory_get_peak_usage(true);
 
         // Also, determining item time values needs to happen immediately
-        $this->item = ($this->tracker->getLastTick())
+        $this->itemTime = ($this->tracker->getLastTick())
             ? $this->tick->getTimestamp() - $this->tracker->getLastTick()->getTimestamp()
             : $this->getTimeElapsed();
 
@@ -283,7 +283,7 @@ class Report implements ReportInterface
      *
      * @return int
      */
-    function getMemPeakUsage()
+    public function getMemPeakUsage()
     {
         return $this->memPeakUsage;
     }
