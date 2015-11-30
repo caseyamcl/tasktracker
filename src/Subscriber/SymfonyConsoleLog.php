@@ -23,6 +23,7 @@ use TaskTracker\Events;
 use TaskTracker\Helper\BytesToHumanTrait;
 use TaskTracker\Helper\TimeFormatterTrait;
 use TaskTracker\Tick;
+use TaskTracker\Tracker;
 
 /**
  * Symfony Console Log Task Tracker Subscriber
