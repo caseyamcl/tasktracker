@@ -98,7 +98,7 @@ class SymfonyConsoleLog implements EventSubscriberInterface
         $lineSegs[] = sprintf(
             "[%s%s]",
             $tick->getReport()->getNumItemsProcessed(),
-            $tick->getReport()->getTotalItemCount() ? "/" . $tick->getReport()->getTotalItemCount() : ''
+            $tick->getReport()->getTotalItemCount() != Tracker::UNKNOWN ? "/" . $tick->getReport()->getTotalItemCount() : ''
         );
 
         // If verbose, add walltime and item counts
