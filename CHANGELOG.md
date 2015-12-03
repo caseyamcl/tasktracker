@@ -2,7 +2,7 @@
 
 All Notable changes to `caseyamcl/tasktracker` will be documented in this file
 
-## Version 2.1.1
+## Version 2.1.1 (2015-12-03)
 
 ### Fixed
 
