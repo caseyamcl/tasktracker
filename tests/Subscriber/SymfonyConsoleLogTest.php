@@ -24,6 +24,7 @@ use TaskTracker\Events;
 use TaskTracker\Subscriber\SymfonyConsoleLog;
 use TaskTracker\Test\Fixture\TickBuilderTrait;
 use TaskTracker\Tick;
+use TaskTracker\Tracker;
 
 class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
 {
@@ -67,6 +68,28 @@ class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
 
         $obj->writeLogLine($this->getTick());
         $this->assertEquals('* [3/25] Processing item 3', trim($output->fetch()));
+    }
+
+    // ---------------------------------------------------------------
+
+    /**
+     * If the tracker is tracking an unknown number of items, ensure
+     * that the number of items displayed is "[n]" instead of "[n/-1]"
+     */
+    public function testOutputDisplaysNumItemsCorrectlyForUnknownNumberOfTicks()
+    {
+        $tracker = \Mockery::mock('\TaskTracker\Tracker');
+        $tracker->shouldReceive('getStartTime')->andReturn(100);
+        $tracker->shouldReceive('getNumTotalItems')->andReturn(Tracker::UNKNOWN);
+        $tracker->shouldReceive('getLastTick')->andReturn(null);
+        $tracker->shouldReceive('getNumProcessedItems')->andReturn(3);
+        $tick = new Tick($tracker, Tick::SUCCESS, 'msg', []);
+
+        $output = new BufferedOutput();
+        $obj = new SymfonyConsoleLog($output);
+
+        $obj->writeLogLine($tick);
+        $this->assertEquals('* [3] msg', trim($output->fetch()));
     }
 
     // ---------------------------------------------------------------

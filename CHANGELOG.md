@@ -2,6 +2,12 @@
 
 All Notable changes to `caseyamcl/tasktracker` will be documented in this file
 
+## Version 2.1.1
+
+### Fixed
+
+- Make Symfony Console Log display unknown sizes correctly.
+
 ## Version 2.1 (2015-04-09)
 
 ### Added
