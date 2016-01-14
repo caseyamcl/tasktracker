@@ -107,7 +107,7 @@ class Tracker
     }
 
     /**
-     * Run as closure
+     * Iterate over items and track them
      *
      * @param \Traversable $items
      * @param callable     $itemCallback  Callback accepts arguments: (Tracker $tracker, $item)
