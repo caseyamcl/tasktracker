@@ -226,7 +226,6 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
         });
 
         $this->assertEquals(2, $lastReport->getNumItemsProcessed());
-        $this->assertEquals('msg2', $lastReport->getMessage());
     }
 
     // ---------------------------------------------------------------

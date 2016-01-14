@@ -115,11 +115,11 @@ class Tracker
      */
     public function run(\Traversable $items, callable $itemCallback)
     {
+        $this->start();
         foreach ($items as $item) {
             call_user_func($itemCallback, $this, $item);
         }
-
-        return $this->getLastTick()->getReport();
+        return $this->finish();
     }
 
 
