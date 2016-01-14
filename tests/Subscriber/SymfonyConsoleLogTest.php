@@ -17,7 +17,6 @@
 
 namespace Subscriber;
 
-
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use TaskTracker\Events;
@@ -30,8 +29,6 @@ class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
 {
     use TickBuilderTrait;
 
-    // ---------------------------------------------------------------
-
     public function testGetSubscribedEvents()
     {
         $expected = [
@@ -43,8 +40,6 @@ class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, SymfonyConsoleLog::getSubscribedEvents());
     }
-
-    // ---------------------------------------------------------------
 
     /**
      * @dataProvider startFinishAbortMessagesProvider
@@ -59,18 +54,14 @@ class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, trim($output->fetch()));
     }
 
-    // ---------------------------------------------------------------
-
     public function testTickStandardVerbosity()
     {
         $output = new BufferedOutput();
         $obj = new SymfonyConsoleLog($output);
 
         $obj->writeLogLine($this->getTick());
-        $this->assertEquals('* [3/25] Processing item 3', trim($output->fetch()));
+        $this->assertEquals('SUCC» [3/25] Processing item 3', trim($output->fetch()));
     }
-
-    // ---------------------------------------------------------------
 
     /**
      * If the tracker is tracking an unknown number of items, ensure
@@ -89,10 +80,8 @@ class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
         $obj = new SymfonyConsoleLog($output);
 
         $obj->writeLogLine($tick);
-        $this->assertEquals('* [3] msg', trim($output->fetch()));
+        $this->assertEquals('SUCC» [3] msg', trim($output->fetch()));
     }
-
-    // ---------------------------------------------------------------
 
     public function testTickVeryVerbose()
     {
@@ -104,12 +93,10 @@ class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
         $obj->writeLogLine($this->getTick(Tick::FAIL));
 
         $this->assertRegExp(
-            '/\* \[3\/25\] [\d,]+:[\d]{2}:[\d]{2} \(3\/3\/3\) Processing item 3/',
+            '/\FAIL» \[3\/25\] [\d,]+:[\d]{2}:[\d]{2} \(3\/3\/3\) Processing item 3/',
             trim($output->fetch())
         );
     }
-
-    // ---------------------------------------------------------------
 
     public function testTickVeryVeryVerbose()
     {
@@ -121,13 +108,31 @@ class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
         $obj->writeLogLine($this->getTick(Tick::SKIP));
 
         $this->assertRegExp(
-            '/\* \[3\/25\] [\d,]+:[\d]{2}:[\d]{2} \(3\/3\/3\) \{[\d\w\.]+\/[\d\w\.]+\} Processing item 3/',
+            '/SKIP» \[3\/25\] [\d,]+:[\d]{2}:[\d]{2} \(3\/3\/3\) \{[\d\w\.]+\/[\d\w\.]+\} Processing item 3/',
             trim($output->fetch())
         );
 
     }
 
-    // ---------------------------------------------------------------
+    public function testSetCustomMapGeneratesExpectedOutput()
+    {
+        $output = new BufferedOutput();
+        $obj = new SymfonyConsoleLog($output);
+
+        $obj->setLinePrefixMap([
+            Tick::SKIP    => '*',
+            Tick::SUCCESS => '>',
+            Tick::FAIL    => 'X'
+        ]);
+
+        $obj->writeLogLine($this->getTick(Tick::SUCCESS));
+        $obj->writeLogLine($this->getTick(TICK::FAIL));
+        $obj->writeLogLine($this->getTick(Tick::SKIP));
+
+        $expected = "> [3/25] Processing item 3\nX [3/25] Processing item 3\n* [3/25] Processing item 3";
+        $this->assertEquals($expected, trim($output->fetch()));
+    }
+
 
     public function startFinishAbortMessagesProvider()
     {

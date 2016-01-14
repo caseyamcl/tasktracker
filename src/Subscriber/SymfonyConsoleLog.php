@@ -43,6 +43,15 @@ class SymfonyConsoleLog implements EventSubscriberInterface
      */
     private $output;
 
+    /**
+     * @var array
+     */
+    private $linePrefixMap = [
+        Tick::SKIP    => 'SKIP»',
+        TICK::SUCCESS => 'SUCC»',
+        TICK::FAIL    => 'FAIL»'
+    ];
+
     // --------------------------------------------------------------
 
     /**
@@ -70,6 +79,34 @@ class SymfonyConsoleLog implements EventSubscriberInterface
         ];
     }
 
+
+    // ---------------------------------------------------------------
+
+    /**
+     * Set line prefix map
+     *
+     * @param array $prefixMap  [status => 'prefix']
+     */
+    public function setLinePrefixMap(array $prefixMap)
+    {
+        foreach ($prefixMap as $status => $prefix) {
+            $this->setLinePrefix($status, $prefix);
+        }
+    }
+
+    // ---------------------------------------------------------------
+
+    /**
+     * Set prefix for a given status
+     *
+     * @param int    $status  Tick::SUCCESS, Tick::FAIL, or Tick::SUCCESS
+     * @param string $prefix
+     */
+    public function setLinePrefix($status, $prefix)
+    {
+        $this->linePrefixMap[$status] = $prefix;
+    }
+
     // ---------------------------------------------------------------
 
     /**
@@ -85,14 +122,14 @@ class SymfonyConsoleLog implements EventSubscriberInterface
         // 1st Segment is a star
         switch ($tick->getStatus()) {
             case Tick::SUCCESS:
-                $lineSegs[] = "<fg=green>*</fg=green>";
+                $lineSegs[] = sprintf("<fg=green>%s</fg=green>", $this->linePrefixMap[Tick::SUCCESS]);
                 break;
             case Tick::FAIL:
-                $lineSegs[] = "<fg=red>*</fg=red>";
+                $lineSegs[] = sprintf("<fg=red>%s</fg=red>", $this->linePrefixMap[Tick::FAIL]);
                 break;
             case Tick::SKIP:
             default:
-                $lineSegs[] = "*";
+                $lineSegs[] = $this->linePrefixMap[Tick::SKIP];
         }
 
         // Item Progress
