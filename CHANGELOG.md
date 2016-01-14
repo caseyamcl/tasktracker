@@ -12,6 +12,7 @@ All Notable changes to `caseyamcl/tasktracker` will be documented in this file
 ### Added
 
 - Added ability to create custom line prefixes for Symfony Console log
+- Added `Tracker::run()` method to run the tracker with a callback to process items 
 
 ## Version 2.1.1 (2015-12-03)
 
