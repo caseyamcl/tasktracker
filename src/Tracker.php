@@ -107,6 +107,23 @@ class Tracker
     }
 
     /**
+     * Run as closure
+     *
+     * @param \Traversable $items
+     * @param callable     $itemCallback  Callback accepts arguments: (Tracker $tracker, $item)
+     * @return Report      The final report
+     */
+    public function run(\Traversable $items, callable $itemCallback)
+    {
+        foreach ($items as $item) {
+            call_user_func($itemCallback, $this, $item);
+        }
+
+        return $this->getLastTick()->getReport();
+    }
+
+
+    /**
      * @return EventDispatcherInterface
      */
     public function getDispatcher()
@@ -151,8 +168,6 @@ class Tracker
             return array_sum($this->numProcessedItems);
         }
     }
-
-    // --------------------------------------------------------------
 
     /**
      * Get the start time in microseconds (returns NULL if not yet started)

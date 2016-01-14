@@ -216,6 +216,21 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
 
     // ---------------------------------------------------------------
 
+    public function testRunMethod()
+    {
+        $tracker = Tracker::build([], 10);
+        $iterator = new \ArrayIterator(['msg1', 'msg2']);
+
+        $lastReport = $tracker->run($iterator, function(Tracker $tracker, $item) {
+            $tracker->tick(Tick::SUCCESS, $item);
+        });
+
+        $this->assertEquals(2, $lastReport->getNumItemsProcessed());
+        $this->assertEquals('msg2', $lastReport->getMessage());
+    }
+
+    // ---------------------------------------------------------------
+
     protected function getTrackerObj($num = Tracker::UNKNOWN)
     {
         return new Tracker($num);

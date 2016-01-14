@@ -2,6 +2,17 @@
 
 All Notable changes to `caseyamcl/tasktracker` will be documented in this file
 
+## Version 2.2 (2016-xx-xx)
+
+### Fixed
+
+- Symfony Console Log line prefix defaults to 'SKIP', 'SUCC', or 'FAIL' instead of *
+  to make logs more clear for monochrome terminals
+
+### Added
+
+- Added ability to create custom line prefixes for Symfony Console log
+
 ## Version 2.1.1 (2015-12-03)
 
 ### Fixed
