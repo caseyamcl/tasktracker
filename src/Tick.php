@@ -63,8 +63,6 @@ class Tick extends Event implements TickInterface
      */
     private $extraInfo;
 
-    // --------------------------------------------------------------
-
     /**
      * Constructor
      *
@@ -88,8 +86,6 @@ class Tick extends Event implements TickInterface
         $this->extraInfo   = $extraInfo;
         $this->report      = new Report($this, $tracker);
     }
-
-    // ---------------------------------------------------------------
 
     /**
      * Returns the message associated with the Tick event

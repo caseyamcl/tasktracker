@@ -32,8 +32,6 @@ class Report implements ReportInterface
         toArray as traitToArray;
     }
 
-    // --------------------------------------------------------------
-
     /**
      * @var Tick
      */
@@ -69,8 +67,6 @@ class Report implements ReportInterface
      */
     private $minTickTime;
 
-    // --------------------------------------------------------------
-
     /**
      * Constructor
      *
@@ -100,8 +96,6 @@ class Report implements ReportInterface
             $this->maxTickTime = $this->minTickTime = $this->getItemTime();
         }
     }
-
-    // ---------------------------------------------------------------
 
     /**
      * Returns the time this task started in microseconds
@@ -307,8 +301,6 @@ class Report implements ReportInterface
     {
         return $this->tick->getExtraInfo();
     }
-
-    // ---------------------------------------------------------------
 
     /**
      * Converts this report to an array

@@ -34,8 +34,6 @@ class TrackerFactory
      */
     private $defaultSubscribers;
 
-    // ---------------------------------------------------------------
-
     /**
      * Constructor
      *
@@ -45,8 +43,6 @@ class TrackerFactory
     {
         $this->defaultSubscribers = $defaultSubscribers;
     }
-
-    // ---------------------------------------------------------------
 
     /**
      * Build a new Tracker instance

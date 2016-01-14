@@ -38,8 +38,6 @@ class Tracker
     const FINISHED     = 2;
     const ABORTED      = 3;
 
-    // ---------------------------------------------------------------
-
     /**
      * @var EventDispatcherInterface
      */
@@ -70,8 +68,6 @@ class Tracker
      */
     private $status;
 
-    // --------------------------------------------------------------
-
     /**
      * Build a task tracker using a list of subscribers
      *
@@ -96,8 +92,6 @@ class Tracker
         return $that;
     }
 
-    // --------------------------------------------------------------
-
     /**
      * Constructor
      *
@@ -112,8 +106,6 @@ class Tracker
         $this->numProcessedItems = [];
     }
 
-    // --------------------------------------------------------------
-
     /**
      * @return EventDispatcherInterface
      */
@@ -121,8 +113,6 @@ class Tracker
     {
         return $this->dispatcher;
     }
-
-    // --------------------------------------------------------------
 
     /**
      * Add a subscriber to this Tracker instance
@@ -134,8 +124,6 @@ class Tracker
         $this->dispatcher->addSubscriber($subscriber);
     }
 
-    // --------------------------------------------------------------
-
     /**
      * Get number of total items to be processed (-1 for unknown)
      *
@@ -145,8 +133,6 @@ class Tracker
     {
         return $this->numTotalItems;
     }
-
-    // ---------------------------------------------------------------
 
     /**
      * Return the number of items processed, including failed/succeeded
@@ -178,8 +164,6 @@ class Tracker
         return $this->startTime;
     }
 
-    // --------------------------------------------------------------
-
     /**
      * Get the last report
      *
@@ -192,8 +176,6 @@ class Tracker
         return $this->lastTick;
     }
 
-    // ---------------------------------------------------------------
-
     /**
      * Get the status
      *
@@ -204,8 +186,6 @@ class Tracker
         return $this->status;
     }
 
-    // ---------------------------------------------------------------
-
     /**
      * Is the tracker running?
      *
@@ -215,8 +195,6 @@ class Tracker
     {
         return ($this->getStatus() == self::RUNNING);
     }
-
-    // --------------------------------------------------------------    
 
     /**
      * Start processing
@@ -240,8 +218,6 @@ class Tracker
         $this->dispatcher->dispatch(Events::TRACKER_START, $tick);
         $this->lastTick = $tick;
     }
-
-    // --------------------------------------------------------------
 
     /**
      * Indicate progress to the tracker
@@ -275,8 +251,6 @@ class Tracker
         return $tick->getReport();
     }
 
-    // --------------------------------------------------------------    
-
     /**
      * Finish processing
      *
@@ -300,8 +274,6 @@ class Tracker
         $this->lastTick = $tick;
         return $tick->getReport();
     }
-
-    // --------------------------------------------------------------    
 
     /**
      * Abort processing
