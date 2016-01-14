@@ -118,7 +118,7 @@ And, you can increment by more than one item at a time:
     $tracker->tick(Tick::SUCCESS, '', [], 5);
     
     // Three items failed
-    $trakcer->tick(Tick::FAIL, 'Something went wrong', [], 3);
+    $tracker->tick(Tick::FAIL, 'Something went wrong', [], 3);
 
 When you are done, call the `Tracker::finish()` method:
 
@@ -147,6 +147,26 @@ The class contains a few helper methods, too:
     
     // Get the time started (in microseconds)
     $tracker->getStartTime();
+
+You can use the `Tracker:run($iterator, $callback)` method for cleaner syntax.  
+The `$iterator` value must be an instance of `\Traversable`; arrays are not 
+accepted, but `ArrayIterator` objects will work:
+
+    $iterator = new \ArrayIterator(['a', 'b', 'c']);
+    
+    // This code is the equivalent of...
+    $tracker->run($iterator, function(Tracker $tracker, $item) {
+        // work on a single item
+        $tracker->tick();
+    });
+    
+    //...this code:
+    $tracker->start();
+    foreach ($iterator as $item) {
+        // work on a single item
+        $tracker->tick();
+    }
+    $tracker->finish();    
        
 ### Subscribers
 
