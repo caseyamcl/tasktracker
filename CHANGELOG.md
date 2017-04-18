@@ -8,6 +8,7 @@ All Notable changes to `caseyamcl/tasktracker` will be documented in this file
 
 - Updated dependencies in `composer.json` to be compatible with more modern versions of
   Symfony components.
+- Updated `.travis.yml` to run tests on PHP 7.0 and 7.1
 
 ## Version 2.2 (2016-01-13)
 
