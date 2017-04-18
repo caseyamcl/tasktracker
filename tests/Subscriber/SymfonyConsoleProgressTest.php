@@ -120,8 +120,10 @@ class SymfonyConsoleProgressTest extends \PHPUnit_Framework_TestCase
 
         $obj->tick($this->getTick(Tick::SUCCESS, 'Test Message'));
 
-        $expected = "Test Message\n  0/25 [>---------------------------]   0%  1 sec\n  3/25 [===>------------------------]  12%  1 sec";
-        $this->assertEquals(trim($expected), trim($output->fetch()));
+        $this->assertRegExp(
+            '/Test Message\n(\s+)?0\/25\s+\[>(-+?)\]\s+0%\s+[\<\d\s]+sec(\s+)?\n(\s+)?3\/25\s+\[=+>(-+?)\]\s+12%\s+[\<\d\s]+sec(\s+)?/s',
+            trim($output->fetch())
+        );
     }
 
     // ---------------------------------------------------------------
@@ -135,8 +137,10 @@ class SymfonyConsoleProgressTest extends \PHPUnit_Framework_TestCase
 
         $obj->tick($this->getTick(Tick::SUCCESS, 'Test Message'));
 
-        $expected = "Test Message\n  0/25 [>---------------------------]   0%  1 sec/1 sec \n  3/25 [===>------------------------]  12%  1 sec/1 sec";
-        $this->assertEquals(trim($expected), trim($output->fetch()));
+        $this->assertRegExp(
+            '/Test Message\n(\s+)?0\/25\s+\[>(-+?)\]\s+0%\s+[\<\d\s]+sec(\s+)?\/[\<\d\s]+sec\n(\s+)?3\/25\s+\[=+>(-+?)\]\s+12%\s+[\<\d\s]+sec(\s+)?\/[\<\d\s]+sec/s',
+            trim($output->fetch())
+        );
     }
 
 }
