@@ -17,12 +17,12 @@
     "require":
     {
         "php"                     : ">=5.4",
-        "symfony/event-dispatcher": "~2.6"
+        "symfony/event-dispatcher": "^2.6"
     },
     "require-dev":
     {
-        "symfony/console": "~2.6",
-        "psr/log"        : "~1.0",
+        "symfony/console": "~2.6|~3.0",
+        "psr/log"        : "^1.0",
         "monolog/monolog": "~1.13",
         "phpunit/phpunit": "~4.0",
         "mockery/mockery": "~0.9"

@@ -2,6 +2,13 @@
 
 All Notable changes to `caseyamcl/tasktracker` will be documented in this file
 
+## Version 2.2.1 (2017-04-18)
+
+### Fixed
+
+- Updated dependencies in `composer.json` to be compatible with more modern versions of
+  Symfony components.
+
 ## Version 2.2 (2016-01-13)
 
 ### Fixed
