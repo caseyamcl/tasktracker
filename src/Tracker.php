@@ -186,7 +186,7 @@ class Tracker
      *
      * @return Report|null
      */
-    public function getLastTick(): ?Report
+    public function getLastTick()
     {
         return $this->lastTick;
     }
