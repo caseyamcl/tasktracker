@@ -15,6 +15,8 @@
  * ------------------------------------------------------------------
  */
 
+declare(strict_types=1);
+
 namespace TaskTracker\Test\Fixture;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,10 +25,7 @@ use TaskTracker\Tick;
 
 class ArrayRecordingSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var array
-     */
-    private $items;
+    private array $items;
 
     // ---------------------------------------------------------------
 
@@ -40,9 +39,6 @@ class ArrayRecordingSubscriber implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
-    /**
-     * @param Tick $tick
-     */
     public function addToArray(Tick $tick)
     {
         $this->items[] = $tick->getMessage();
@@ -50,10 +46,11 @@ class ArrayRecordingSubscriber implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
+
     /**
-     * @return array
+     * @return array<Tick>
      */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->items;
     }
@@ -63,7 +60,7 @@ class ArrayRecordingSubscriber implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [ Events::TRACKER_TICK->value => 'addToArray' ];
     }

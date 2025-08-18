@@ -15,6 +15,8 @@
  * ------------------------------------------------------------------
  */
 
+declare(strict_types=1);
+
 namespace TaskTracker\Test\Fixture;
 
 use TaskTracker\Helper\MagicPropsTrait;
@@ -30,15 +32,9 @@ class MagicPropsObject
 
     // ---------------------------------------------------------------
 
-    /**
-     * @var string
-     */
-    private $someVal;
+    private string $someVal;
 
-    /**
-     * @var string
-     */
-    private $anotherVal;
+    private string $anotherVal;
 
     // ---------------------------------------------------------------
 
@@ -50,18 +46,12 @@ class MagicPropsObject
 
     // ---------------------------------------------------------------
 
-    /**
-     * @return string
-     */
-    public function getSomeVal()
+    public function getSomeVal(): string
     {
         return $this->someVal;
     }
 
-    /**
-     * @return string
-     */
-    public function getValWithoutAProperty()
+    public function getValWithoutAProperty(): string
     {
         return 'bar';
     }

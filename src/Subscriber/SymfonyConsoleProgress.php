@@ -15,6 +15,8 @@
  * ------------------------------------------------------------------
  */
 
+declare(strict_types=1);
+
 namespace TaskTracker\Subscriber;
 
 use Symfony\Component\Console\Helper\ProgressBar;
