@@ -38,35 +38,17 @@ class Tracker
     const FINISHED     = 2;
     const ABORTED      = 3;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
-    /**
-     * @var int  The number of total item (-1 for infinite/unknown)
-     */
-    private $numTotalItems;
+    private int $numTotalItems;
 
-    /**
-     * @var array  Array holding processed items by Tick type
-     */
-    private $numProcessedItems;
+    private array $numProcessedItems;
 
-    /**
-     * @var float  The start time (a float value)
-     */
-    private $startTime;
+    private ?float $startTime;
 
-    /**
-     * @var Tick  Holds the last tick
-     */
-    private $lastTick;
+    private ?Tick $lastTick = null;
 
-    /**
-     * @var int  One of the constants defined above
-     */
-    private $status;
+    private int $status;
 
     /**
      * Build a task tracker using a list of subscribers
@@ -78,7 +60,7 @@ class Tracker
      * @param int                              $totalItems
      * @return static
      */
-    public static function build(array $subscribers = [], $totalItems = self::UNKNOWN)
+    public static function build(array $subscribers = [], int $totalItems = self::UNKNOWN): self
     {
         // New object
         $that = new static($totalItems);
@@ -95,11 +77,13 @@ class Tracker
     /**
      * Constructor
      *
-     * @param EventDispatcherInterface  $dispatcher
-     * @param int                       $totalItems     Default is unknown (-1)
+     * @param int $totalItems Default is unknown (-1)
+     * @param EventDispatcherInterface|null $dispatcher
      */
-    public function __construct($totalItems = self::UNKNOWN, EventDispatcherInterface $dispatcher = null)
-    {
+    public function __construct(
+        int $totalItems = self::UNKNOWN,
+        ?EventDispatcherInterface $dispatcher = null
+    ) {
         $this->status            = self::NOT_STARTED;
         $this->dispatcher        = $dispatcher ?: new EventDispatcher();
         $this->numTotalItems     = $totalItems;
@@ -109,11 +93,11 @@ class Tracker
     /**
      * Iterate over items and track them
      *
-     * @param \Traversable $items
-     * @param callable     $itemCallback  Callback accepts arguments: (Tracker $tracker, $item)
-     * @return Report      The final report
+     * @param iterable $items
+     * @param callable $itemCallback  Callback accepts arguments: (Tracker $tracker, $item)
+     * @return Report  The final report
      */
-    public function run(\Traversable $items, callable $itemCallback)
+    public function run(iterable $items, callable $itemCallback): Report
     {
         $this->start();
         foreach ($items as $item) {
@@ -122,31 +106,23 @@ class Tracker
         return $this->finish();
     }
 
-
-    /**
-     * @return EventDispatcherInterface
-     */
-    public function getDispatcher()
+    public function getDispatcher(): EventDispatcherInterface
     {
         return $this->dispatcher;
     }
 
     /**
      * Add a subscriber to this Tracker instance
-     *
-     * @param EventSubscriberInterface $subscriber
      */
-    public function addSubscriber(EventSubscriberInterface $subscriber)
+    public function addSubscriber(EventSubscriberInterface $subscriber): void
     {
         $this->dispatcher->addSubscriber($subscriber);
     }
 
     /**
-     * Get number of total items to be processed (-1 for unknown)
-     *
-     * @return int
+     * Get the number of total items to be processed (-1 for unknown)
      */
-    public function getNumTotalItems()
+    public function getNumTotalItems(): int
     {
         return $this->numTotalItems;
     }
@@ -154,10 +130,10 @@ class Tracker
     /**
      * Return the number of items processed, including failed/succeeded
      *
-     * @param int $tickType  Tick::SUCCESS, Tick::FAIL, Tick::SKIP, or null for all
-     * @return int
+     * If $tickType is specified, only return the item count of that type
+     * Tick::SUCCESS, Tick::FAIL, Tick::SKIP, or null for all
      */
-    public function getNumProcessedItems($tickType = null)
+    public function getNumProcessedItems(?int $tickType = null): int
     {
         if (null !== $tickType) {
             return (array_key_exists($tickType, $this->numProcessedItems))
@@ -171,10 +147,8 @@ class Tracker
 
     /**
      * Get the start time in microseconds (returns NULL if not yet started)
-     *
-     * @return float|null
      */
-    public function getStartTime()
+    public function getStartTime(): ?float
     {
         return $this->startTime;
     }
@@ -182,31 +156,25 @@ class Tracker
     /**
      * Get the last report
      *
-     * Returns null if not started
-     *
-     * @return Report|null
+     * Returns NULL if not started
      */
-    public function getLastTick()
+    public function getLastTick(): ?Tick
     {
         return $this->lastTick;
     }
 
     /**
      * Get the status
-     *
-     * @return int
      */
-    public function getStatus()
+    public function getStatus(): int
     {
         return $this->status;
     }
 
     /**
      * Is the tracker running?
-     *
-     * @return bool
      */
-    public function isRunning()
+    public function isRunning(): bool
     {
         return ($this->getStatus() == self::RUNNING);
     }
@@ -214,13 +182,15 @@ class Tracker
     /**
      * Start processing
      *
-     * If this method is not called explicitely, it will automatically
-     * be called upon first tick
+     * If this method is not called explicitly, it will automatically
+     * be called upon the first tick
      *
-     * @param string $msg Optional message to include
-     * @param array  $extraInfo
+     * @param string|null $msg       Optional message to include
+     * @param array       $extraInfo Optional extra info to include
+     * @return void
+     * @throws TrackerException  If called when already started
      */
-    public function start($msg = null, array $extraInfo = [])
+    public function start(?string $msg = null, array $extraInfo = []): void
     {
         if ($this->status != self::NOT_STARTED) {
             throw new TrackerException("Cannot start tracker that was already started");
@@ -239,14 +209,18 @@ class Tracker
      *
      * Builds a report and send it to the tick method in the output handlers
      *
-     * @param int    $status SUCCESS (default), SKIP, or FAIL
-     * @param string $msg    Message to include for this report
-     * @param array  $extraInfo
-     * @param int    $incrementBy
+     * @param int         $status SUCCESS (default), SKIP, or FAIL
+     * @param string|null $msg    Message to include in this report
+     * @param array       $extraInfo
+     * @param int         $incrementBy
      * @return Report
      */
-    public function tick($status = Tick::SUCCESS, $msg = null, array $extraInfo = [], $incrementBy = 1)
-    {
+    public function tick(
+        int $status = Tick::SUCCESS,
+        ?string $msg = null,
+        array $extraInfo = [],
+        int $incrementBy = 1
+    ): Report {
         if ( ! $this->isRunning()) {
             $this->start();
         }
@@ -271,11 +245,11 @@ class Tracker
      *
      * Builds a report and sends it to the finish method in the output handlers
      *
-     * @param string $msg Optional message to include
-     * @param array  $extraInfo
+     * @param string|null $msg  Optional message to include
+     * @param array  $extraInfo Optional extra info to include
      * @return Report
      */
-    public function finish($msg = null, array $extraInfo = [])
+    public function finish(?string $msg = null, array $extraInfo = []): Report
     {
         if ( ! $this->isRunning()) {
             throw new TrackerException("Cannot finish Tracker.  Not running.");
@@ -293,13 +267,13 @@ class Tracker
     /**
      * Abort processing
      *
-     * Builds a reports and send it to the abort method in the output handlers
+     * Builds a report and sends it to the abort method in the output handlers
      *
-     * @param string $msg Optional message to include
-     * @param array  $extraInfo
+     * @param string|null $msg Optional message to include
+     * @param array $extraInfo Optional extra info to include
      * @return Report
      */
-    public function abort($msg = null, array $extraInfo = [])
+    public function abort(?string $msg = null, array $extraInfo = []): Report
     {
         if ( ! $this->isRunning()) {
             throw new TrackerException("Cannot abort Tracker.  Not running.");
