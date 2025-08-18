@@ -30,7 +30,7 @@ trait TimeFormatterTrait
      * @param float $elapsedTime
      * @return string
      */
-    public function formatSeconds($elapsedTime)
+    public function formatSeconds(float $elapsedTime): string
     {
         $seconds = floor($elapsedTime);
         $output = array();
@@ -39,7 +39,7 @@ trait TimeFormatterTrait
         if ($seconds > 3600) {
             $hours    = floor($seconds / 3600);
             $seconds  = $seconds - (3600 * $hours);
-            $output[] = number_format($hours, 0);
+            $output[] = number_format($hours);
         }
 
         //Minutes

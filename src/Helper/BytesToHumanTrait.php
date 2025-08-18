@@ -27,13 +27,13 @@ trait BytesToHumanTrait
     /**
      * Convert bytes to a human-readable format
      *
-     * For example (int) 1024 becomes (string) "1.02KB"
+     * For example, (int) 1024 becomes (string) "1.02KB"
      *
      * @param int $bytes
      * @param int $decimals
      * @return string
      */
-    protected function bytesToHuman($bytes, $decimals = 2)
+    protected function bytesToHuman(int $bytes, int $decimals = 2): string
     {
         $map = [
             1000000000000 => 'TB',

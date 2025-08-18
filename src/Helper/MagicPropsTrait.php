@@ -17,6 +17,8 @@
 
 namespace TaskTracker\Helper;
 
+use ReflectionMethod;
+
 /**
  * Adds magic methods to classes to provide direct access to
  * any property that has a 'getX()' interface method
@@ -31,11 +33,9 @@ trait MagicPropsTrait
      * @param string $item
      * @return mixed
      */
-    public function __get($item)
+    public function __get(string $item)
     {
-        if ($this->__isset($item)) {
-            return call_user_func($this->getMethodCallback($item));
-        }
+        return $this->__isset($item) ? call_user_func($this->getMethodCallback($item)) : null;
     }
 
     // ---------------------------------------------------------------
@@ -44,7 +44,7 @@ trait MagicPropsTrait
      * @param string $item
      * @return bool
      */
-    public function __isset($item)
+    public function __isset(string $item)
     {
         return is_callable($this->getMethodCallback($item));
     }
@@ -57,9 +57,9 @@ trait MagicPropsTrait
 
         foreach (get_class_methods(__CLASS__) as $mthd) {
 
-            $ref = new \ReflectionMethod(__CLASS__, $mthd);
+            $ref = new ReflectionMethod(__CLASS__, $mthd);
 
-            if ($ref->isPublic() && substr($mthd, 0, 3) == 'get') {
+            if ($ref->isPublic() && str_starts_with($mthd, 'get')) {
                 $propName = strtolower($mthd[3]) . substr($mthd, 4);
                 $outArr[$propName] = call_user_func([$this, $mthd]);
             }

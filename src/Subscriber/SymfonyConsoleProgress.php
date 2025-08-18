@@ -47,10 +47,10 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            Events::TRACKER_START  => 'start',
-            Events::TRACKER_TICK   => 'tick',
-            Events::TRACKER_FINISH => 'finish',
-            Events::TRACKER_ABORT  => 'abort'
+            Events::TRACKER_START->value  => 'start',
+            Events::TRACKER_TICK->value   => 'tick',
+            Events::TRACKER_FINISH->value => 'finish',
+            Events::TRACKER_ABORT->value  => 'abort'
         ];
     }
 
@@ -70,8 +70,6 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
 
     /**
      * Start callback
-     *
-     * @param Tick $tick
      */
     public function start(Tick $tick): void
     {
@@ -93,8 +91,6 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
 
     /**
      * Tick callback
-     *
-     * @param Tick $tick
      */
     public function tick(Tick $tick): void
     {
@@ -109,10 +105,8 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
 
     /**
      * Finish callback
-     *
-     * @param Tick $tick
      */
-    public function finish(Tick $tick)
+    public function finish(Tick $tick): void
     {
         $this->progressBar->finish();
 
@@ -125,10 +119,8 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
 
     /**
      * Abort callback
-     *
-     * @param Tick $tick
      */
-    public function abort(Tick $tick)
+    public function abort(Tick $tick): void
     {
         $this->progressBar->clear();
         $this->output->writeln($tick->getMessage() ?: 'Aborted');

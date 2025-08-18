@@ -46,10 +46,10 @@ class SymfonyConsoleProgressTest extends TestCase
     public function testGetSubscribedEvents()
     {
         $expected = [
-            Events::TRACKER_START  => 'start',
-            Events::TRACKER_TICK   => 'tick',
-            Events::TRACKER_FINISH => 'finish',
-            Events::TRACKER_ABORT  => 'abort'
+            Events::TRACKER_START->value  => 'start',
+            Events::TRACKER_TICK->value   => 'tick',
+            Events::TRACKER_FINISH->value => 'finish',
+            Events::TRACKER_ABORT->value  => 'abort'
         ];
 
         $this->assertEquals($expected, SymfonyConsoleProgress::getSubscribedEvents());

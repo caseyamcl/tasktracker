@@ -65,6 +65,6 @@ class ArrayRecordingSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [ Events::TRACKER_TICK => 'addToArray' ];
+        return [ Events::TRACKER_TICK->value => 'addToArray' ];
     }
 }

@@ -24,73 +24,31 @@ namespace TaskTracker;
  */
 interface ReportInterface extends TickInterface
 {
-    /**
-     * @return float
-     */
-    function getTimeStarted();
+    function getTimeStarted(): float;
 
-    /**
-     * @return int
-     */
-    function getTotalItemCount();
+    function getTotalItemCount(): int;
 
-    /**
-     * @return Tick
-     */
-    function getTick();
+    function getTick(): Tick;
 
-    /**
-     * @return int
-     */
-    function getNumItemsProcessed();
+    function getNumItemsProcessed(): int;
 
-    /**
-     * @return float
-     */
-    function getTimeElapsed();
+    function getTimeElapsed(): float;
 
-    /**
-     * @return int
-     */
-    function getNumItemsSuccess();
+    function getNumItemsSuccess(): int;
 
-    /**
-     * @return int
-     */
-    function getNumItemsFail();
+    function getNumItemsFail(): int;
 
-    /**
-     * @return int
-     */
-    function getNumItemsSkip();
+    function getNumItemsSkip(): int;
 
-    /**
-     * @return float
-     */
-    function getItemTime();
+    function getItemTime(): float;
 
-    /**
-     * @return float
-     */
-    function getMaxItemTime();
+    function getMaxItemTime(): float;
 
-    /**
-     * @return float
-     */
-    function getMinItemTime();
+    function getMinItemTime(): float;
 
-    /**
-     * @return float
-     */
-    function getAvgItemTime();
+    function getAvgItemTime(): float;
 
-    /**
-     * @return int
-     */
-    function getMemUsage();
+    function getMemUsage(): int;
 
-    /**
-     * @return int
-     */
-    function getMemPeakUsage();
+    function getMemPeakUsage(): int;
 }

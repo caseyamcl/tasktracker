@@ -44,7 +44,7 @@ class Tick extends GenericEvent implements TickInterface
     private float $timestamp;
 
     /**
-     * @var int  The status of tick (success, fail, or skip)
+     * @var int  The status of this tick (success, fail, or skip)
      */
     private int $status;
 

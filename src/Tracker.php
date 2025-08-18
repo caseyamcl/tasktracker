@@ -200,7 +200,7 @@ class Tracker
         $this->startTime = microtime(true);
 
         $tick = new Tick($this, Tick::SUCCESS, $msg, $extraInfo, 0);
-        $this->dispatcher->dispatch($tick, Events::TRACKER_START);
+        $this->dispatcher->dispatch($tick, Events::TRACKER_START->value);
         $this->lastTick = $tick;
     }
 
@@ -234,7 +234,7 @@ class Tracker
             $this->numProcessedItems[$tick->getStatus()] = $tick->getIncrementBy();
         }
 
-        $this->dispatcher->dispatch($tick, Events::TRACKER_TICK);
+        $this->dispatcher->dispatch($tick, Events::TRACKER_TICK->value);
 
         $this->lastTick = $tick;
         return $tick->getReport();
@@ -258,7 +258,7 @@ class Tracker
         $tick = new Tick($this, Tick::SUCCESS, $msg, $extraInfo, 0);
         $this->status = self::FINISHED;
 
-        $this->dispatcher->dispatch($tick, Events::TRACKER_FINISH);
+        $this->dispatcher->dispatch($tick, Events::TRACKER_FINISH->value);
 
         $this->lastTick = $tick;
         return $tick->getReport();
@@ -282,7 +282,7 @@ class Tracker
         $tick = new Tick($this, Tick::FAIL, $msg, $extraInfo, 0);
         $this->status = self::ABORTED;
 
-        $this->dispatcher->dispatch($tick, Events::TRACKER_ABORT);
+        $this->dispatcher->dispatch($tick, Events::TRACKER_ABORT->value);
         
         $this->lastTick = $tick;
         return $tick->getReport();

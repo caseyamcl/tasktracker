@@ -17,6 +17,8 @@
 
 namespace TaskTracker;
 
+use RuntimeException;
+
 /**
  * Tracker Exceptions are thrown only when the Tracker class is misused
  *
@@ -28,7 +30,7 @@ namespace TaskTracker;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class TrackerException extends \RuntimeException
+class TrackerException extends RuntimeException
 {
     // pass
 }

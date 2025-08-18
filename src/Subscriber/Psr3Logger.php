@@ -27,33 +27,16 @@ use TaskTracker\Tick;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class Psr3Logger implements EventSubscriberInterface
+readonly class Psr3Logger implements EventSubscriberInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    // ---------------------------------------------------------------
-
-    /**
-     * Constructor
-     *
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
+    public function __construct(
+        private LoggerInterface $logger
+    ) {
     }
 
     // ---------------------------------------------------------------
 
-    /**
-     * Geth the logger
-     *
-     * @return LoggerInterface
-     */
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
         return $this->logger;
     }
@@ -61,11 +44,9 @@ class Psr3Logger implements EventSubscriberInterface
     // ---------------------------------------------------------------
 
     /**
-     * Start callback
-     *
-     * @param Tick $tick
+     * Start event callback
      */
-    public function start(Tick $tick)
+    public function start(Tick $tick): void
     {
         $this->logger->info($tick->getMessage() ?: 'Started', $tick->getReport()->toArray());
     }
@@ -74,10 +55,8 @@ class Psr3Logger implements EventSubscriberInterface
 
     /**
      * Tick callback
-     *
-     * @param Tick $tick
      */
-    public function tick(Tick $tick)
+    public function tick(Tick $tick): void
     {
         $callback = ($tick->getStatus() == Tick::FAIL)
             ? [$this->logger, 'warning']
@@ -97,10 +76,8 @@ class Psr3Logger implements EventSubscriberInterface
 
     /**
      * Finish callback
-     *
-     * @param Tick $tick
      */
-    public function finish(Tick $tick)
+    public function finish(Tick $tick): void
     {
         $this->logger->info($tick->getMessage() ?: 'Finished', $tick->getReport()->toArray());
     }
@@ -109,10 +86,8 @@ class Psr3Logger implements EventSubscriberInterface
 
     /**
      * Abort callback
-     *
-     * @param Tick $tick
      */
-    public function abort(Tick $tick)
+    public function abort(Tick $tick): void
     {
         $this->logger->warning($tick->getMessage() ?: 'Aborted', $tick->getReport()->toArray());
     }
@@ -122,13 +97,13 @@ class Psr3Logger implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
-            Events::TRACKER_START  => 'start',
-            Events::TRACKER_TICK   => 'tick',
-            Events::TRACKER_FINISH => 'finish',
-            Events::TRACKER_ABORT  => 'abort'
+            Events::TRACKER_START->value  => 'start',
+            Events::TRACKER_TICK->value   => 'tick',
+            Events::TRACKER_FINISH->value => 'finish',
+            Events::TRACKER_ABORT->value  => 'abort'
         ];
     }
 }

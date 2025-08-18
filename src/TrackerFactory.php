@@ -30,14 +30,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class TrackerFactory
 {
     /**
-     * @var array|EventSubscriberInterface[]
+     * @var array<EventSubscriberInterface>
      */
-    private $defaultSubscribers;
+    private array $defaultSubscribers;
 
     /**
      * Constructor
      *
-     * @param EventSubscriberInterface[] $defaultSubscribers
+     * @param array<EventSubscriberInterface> $defaultSubscribers
      */
     public function __construct(array $defaultSubscribers = [])
     {
@@ -47,14 +47,13 @@ class TrackerFactory
     /**
      * Build a new Tracker instance
      *
-     * If $extraSubscribers is not empty, those subscribers will be added
+     * If the $extraSubscribers value is not empty, those subscribers will be added
      * to the Tracker in addition to the defaults.
      *
-     * @param int                               $numItems          The total number of items (or -1 for unknown)
-     * @param array|EventSubscriberInterface[]  $extraSubscribers  Optionally specify extra listeners for this Tracker instance
-     * @return Tracker
+     * @param int                              $numItems          The total number of items (or -1 for unknown)
+     * @param array<EventSubscriberInterface>  $extraSubscribers  Optionally specify extra listeners for this Tracker instance
      */
-    public function buildTracker($numItems = Tracker::UNKNOWN, array $extraSubscribers = [])
+    public function buildTracker(int $numItems = Tracker::UNKNOWN, array $extraSubscribers = []): Tracker
     {
         $tracker = new Tracker($numItems);
 

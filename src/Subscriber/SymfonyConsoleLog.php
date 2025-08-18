@@ -38,15 +38,12 @@ class SymfonyConsoleLog implements EventSubscriberInterface
 
     // --------------------------------------------------------------
 
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private OutputInterface $output;
 
     /**
      * @var array
      */
-    private $linePrefixMap = [
+    private array $linePrefixMap = [
         Tick::SKIP    => 'SKIP»',
         TICK::SUCCESS => 'SUCC»',
         TICK::FAIL    => 'FAIL»'
@@ -69,13 +66,13 @@ class SymfonyConsoleLog implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
-            Events::TRACKER_START  => 'writeStartLine',
-            Events::TRACKER_TICK   => 'writeLogLine',
-            Events::TRACKER_FINISH => 'writeFinishLine',
-            Events::TRACKER_ABORT  => 'writeAbortLine'
+            Events::TRACKER_START->value  => 'writeStartLine',
+            Events::TRACKER_TICK->value   => 'writeLogLine',
+            Events::TRACKER_FINISH->value => 'writeFinishLine',
+            Events::TRACKER_ABORT->value  => 'writeAbortLine'
         ];
     }
 
@@ -87,7 +84,7 @@ class SymfonyConsoleLog implements EventSubscriberInterface
      *
      * @param array $prefixMap  [status => 'prefix']
      */
-    public function setLinePrefixMap(array $prefixMap)
+    public function setLinePrefixMap(array $prefixMap): void
     {
         foreach ($prefixMap as $status => $prefix) {
             $this->setLinePrefix($status, $prefix);
@@ -102,7 +99,7 @@ class SymfonyConsoleLog implements EventSubscriberInterface
      * @param int    $status  Tick::SUCCESS, Tick::FAIL, or Tick::SUCCESS
      * @param string $prefix
      */
-    public function setLinePrefix($status, $prefix)
+    public function setLinePrefix(int $status, string $prefix): void
     {
         $this->linePrefixMap[$status] = $prefix;
     }
@@ -114,23 +111,17 @@ class SymfonyConsoleLog implements EventSubscriberInterface
      *
      * @param Tick $tick
      */
-    public function writeLogLine(Tick $tick)
+    public function writeLogLine(Tick $tick): void
     {
         // Line segments
         $lineSegs = array();
 
         // 1st Segment is a star
-        switch ($tick->getStatus()) {
-            case Tick::SUCCESS:
-                $lineSegs[] = sprintf("<fg=green>%s</fg=green>", $this->linePrefixMap[Tick::SUCCESS]);
-                break;
-            case Tick::FAIL:
-                $lineSegs[] = sprintf("<fg=red>%s</fg=red>", $this->linePrefixMap[Tick::FAIL]);
-                break;
-            case Tick::SKIP:
-            default:
-                $lineSegs[] = $this->linePrefixMap[Tick::SKIP];
-        }
+        $lineSegs[] = match ($tick->getStatus()) {
+            Tick::SUCCESS => sprintf("<fg=green>%s</fg=green>", $this->linePrefixMap[Tick::SUCCESS]),
+            Tick::FAIL => sprintf("<fg=red>%s</fg=red>", $this->linePrefixMap[Tick::FAIL]),
+            default => $this->linePrefixMap[Tick::SKIP],
+        };
 
         // Item Progress
         $lineSegs[] = sprintf(
@@ -159,10 +150,10 @@ class SymfonyConsoleLog implements EventSubscriberInterface
             );
         }
 
-        // Add message
+        // Add a message
         $lineSegs[] = $tick->getMessage() ?: sprintf(
             "Processing item %s",
-            number_format($tick->getReport()->getNumItemsProcessed(), 0)
+            number_format($tick->getReport()->getNumItemsProcessed())
         );
 
         // Output it!
@@ -171,26 +162,17 @@ class SymfonyConsoleLog implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
-    /**
-     * @param Tick $tick
-     */
-    public function writeStartLine(Tick $tick)
+    public function writeStartLine(Tick $tick): void
     {
         $this->output->writeln($tick->getMessage() ?: "Starting . . .");
     }
 
-    /**
-     * @param Tick $tick
-     */
-    public function writeFinishLine(Tick $tick)
+    public function writeFinishLine(Tick $tick): void
     {
         $this->output->writeln($tick->getMessage() ?: ". . . Finished");
     }
 
-    /**
-     * @param Tick $tick
-     */
-    public function writeAbortLine(Tick $tick)
+    public function writeAbortLine(Tick $tick): void
     {
         $this->output->writeln('<error>' . ($tick->getMessage() ?: 'Aborted!') . '</error>');
     }

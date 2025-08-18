@@ -26,44 +26,32 @@ interface TickInterface
 {
     /**
      * Returns the message associated with the Tick event
-     *
-     * @return string
      */
-    public function getMessage();
+    public function getMessage(): string;
 
     /**
      * Returns the timestamp (microtime float) of the Tick event
-     *
-     * @return float
      */
-    public function getTimestamp();
+    public function getTimestamp(): float;
 
     /**
      * Returns the status (Tick::SUCCESS, Tick::FAIL, TICK::SKIP) of the Tick event
-     *
-     * @return int
      */
-    public function getStatus();
+    public function getStatus(): int;
 
     /**
      * Returns the number of increments associated with with the Tick event
-     *
-     * @return int
      */
-    public function getIncrementBy();
+    public function getIncrementBy(): int;
 
 
     /**
      * Returns the report associated with the Tick event
-     *
-     * @return Report
      */
-    public function getReport();
+    public function getReport(): Report;
 
     /**
      * Returns any extra information associated with the Tick event
-     *
-     * @return array
      */
-    public function getExtraInfo();
+    public function getExtraInfo(): array;
 }

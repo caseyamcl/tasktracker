@@ -32,40 +32,13 @@ class Report implements ReportInterface
         toArray as traitToArray;
     }
 
-    /**
-     * @var Tick
-     */
-    private $tick;
-
-    /**
-     * @var Tracker
-     */
-    private $tracker;
-
-    /**
-     * @var int
-     */
-    private $memUsage;
-
-    /**
-     * @var int
-     */
-    private $memPeakUsage;
-
-    /**
-     * @var float
-     */
-    private $itemTime;
-
-    /**
-     * @var float
-     */
-    private $maxTickTime;
-
-    /**
-     * @var float
-     */
-    private $minTickTime;
+    private Tick $tick;
+    private Tracker $tracker;
+    private int $memUsage;
+    private int $memPeakUsage;
+    private float $itemTime;
+    private float $maxTickTime;
+    private float $minTickTime;
 
     /**
      * Constructor
@@ -92,17 +65,14 @@ class Report implements ReportInterface
             $this->maxTickTime = max($this->getItemTime(), $this->tracker->getLastTick()->getReport()->getMaxItemTime());
         }
         else {
-            $this->minTickTime = $this->minTickTime = $this->getItemTime();
             $this->maxTickTime = $this->minTickTime = $this->getItemTime();
         }
     }
 
     /**
      * Returns the time this task started in microseconds
-     *
-     * @return float
      */
-    public function getTimeStarted()
+    public function getTimeStarted(): float
     {
         return $this->tracker->getStartTime();
     }
@@ -111,40 +81,32 @@ class Report implements ReportInterface
      * Returns the total number of items that are to be processed.
      *
      * If unknown or not specified, this returns Tracker::UNKNOWN
-     *
-     * @return int
      */
-    public function getTotalItemCount()
+    public function getTotalItemCount(): int
     {
         return $this->tracker->getNumTotalItems();
     }
 
     /**
      * Get the Tracker Tick object for this report
-     *
-     * @return Tick
      */
-    public function getTick()
+    public function getTick(): Tick
     {
         return $this->tick;
     }
 
     /**
      * Returns the total number of items processed (including skipped and failed)
-     *
-     * @return int
      */
-    public function getNumItemsProcessed()
+    public function getNumItemsProcessed(): int
     {
         return $this->tracker->getNumProcessedItems();
     }
 
     /**
      * Returns the time elapsed in microseconds
-     *
-     * @return float
      */
-    public function getTimeElapsed()
+    public function getTimeElapsed(): float
     {
         return $this->tick->getTimestamp() - $this->tracker->getStartTime();
     }
@@ -152,70 +114,56 @@ class Report implements ReportInterface
 
     /**
      * Returns the number of items thus far that successfully processed
-     *
-     * @return int
      */
-    public function getNumItemsSuccess()
+    public function getNumItemsSuccess(): int
     {
         return $this->tracker->getNumProcessedItems(Tick::SUCCESS);
     }
 
     /**
      * Returns the number of items processed thus far that failed
-     *
-     * @return int
      */
-    public function getNumItemsFail()
+    public function getNumItemsFail(): int
     {
         return $this->tracker->getNumProcessedItems(Tick::FAIL);
     }
 
     /**
      * Returns the number of items processed thus far that were skipped
-     *
-     * @return int
      */
-    public function getNumItemsSkip()
+    public function getNumItemsSkip(): int
     {
         return $this->tracker->getNumProcessedItems(Tick::SKIP);
     }
 
     /**
      * Returns the amount of time the last item took to process
-     *
-     * @return float
      */
-    public function getItemTime()
+    public function getItemTime(): float
     {
         return $this->itemTime;
     }
 
     /**
      * Returns the maximum amount of time any one item has taken to process thus far
-     *
-     * @return float
      */
-    public function getMaxItemTime()
+    public function getMaxItemTime(): float
     {
         return $this->maxTickTime;
     }
 
     /**
      * Returns the minimum amount of time any one item has taken to process thus far
-     *
-     * @return float
      */
-    public function getMinItemTime()
+    public function getMinItemTime(): float
     {
         return $this->minTickTime;
     }
 
     /**
      * Returns the current average (mean) amount of time that items have taken to process thus far
-     *
-     * @return float
      */
-    public function getAvgItemTime()
+    public function getAvgItemTime(): float
     {
         return ($this->getNumItemsProcessed() > 0)
             ? ($this->getTimeElapsed() / $this->getNumItemsProcessed())
@@ -224,90 +172,72 @@ class Report implements ReportInterface
 
     /**
      * Returns the message associated with the last Tick event
-     *
-     * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->tick->getMessage();
     }
 
     /**
      * Returns the timestamp (microtime float) for this Tick event
-     *
-     * @return float
      */
-    public function getTimestamp()
+    public function getTimestamp(): float
     {
         return $this->tick->getTimestamp();
     }
 
     /**
      * Returns the status (Tick::SUCCESS, Tick::FAIL, TICK::SKIP) of the last item processed
-     *
-     * @return int
      */
-    public function getStatus()
+    public function getStatus(): int
     {
         return $this->tick->getStatus();
     }
 
     /**
      * Returns the number of increments associated with the last processed item
-     *
-     * @return int
      */
-    public function getIncrementBy()
+    public function getIncrementBy(): int
     {
         return $this->tick->getIncrementBy();
     }
 
     /**
      * Returns the memory usage at the time of the last processed item (in bytes)
-     *
-     * @return int
      */
-    public function getMemUsage()
+    public function getMemUsage(): int
     {
         return $this->memUsage;
     }
 
     /**
      * Returns the peak memory usage thus far
-     *
-     * @return int
      */
-    public function getMemPeakUsage()
+    public function getMemPeakUsage(): int
     {
         return $this->memPeakUsage;
     }
 
     /**
      * Returns this report
-     *
-     * @return Report
      */
-    public function getReport()
+    public function getReport(): Report
     {
         return $this;
     }
 
     /**
      * Returns any extra information associated with the last tick
-     *
-     * @return array
      */
-    public function getExtraInfo()
+    public function getExtraInfo(): array
     {
         return $this->tick->getExtraInfo();
     }
 
     /**
      * Converts this report to an array
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $arr = $this->traitToArray();
         unset($arr['report'], $arr['tick']);

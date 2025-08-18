@@ -33,10 +33,10 @@ class SymfonyConsoleLogTest extends TestCase
     public function testGetSubscribedEvents()
     {
         $expected = [
-            Events::TRACKER_START  => 'writeStartLine',
-            Events::TRACKER_TICK   => 'writeLogLine',
-            Events::TRACKER_FINISH => 'writeFinishLine',
-            Events::TRACKER_ABORT  => 'writeAbortLine'
+            Events::TRACKER_START->value  => 'writeStartLine',
+            Events::TRACKER_TICK->value   => 'writeLogLine',
+            Events::TRACKER_FINISH->value => 'writeFinishLine',
+            Events::TRACKER_ABORT->value  => 'writeAbortLine'
         ];
 
         $this->assertEquals($expected, SymfonyConsoleLog::getSubscribedEvents());
