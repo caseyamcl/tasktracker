@@ -36,22 +36,15 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
 
     // ---------------------------------------------------------------
 
-    /**
-     * @var OutputInterface;
-     */
-    private $output;
-
-    /**
-     * @var ProgressBar|null  Set at runtime
-     */
-    private $progressBar;
+    private OutputInterface $output;
+    private ?ProgressBar $progressBar = null;
 
     // --------------------------------------------------------------
 
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::TRACKER_START  => 'start',
@@ -80,7 +73,7 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
      *
      * @param Tick $tick
      */
-    public function start(Tick $tick)
+    public function start(Tick $tick): void
     {
         if ($tick->getMessage()) {
             $this->output->writeln($tick->getMessage());
@@ -103,7 +96,7 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
      *
      * @param Tick $tick
      */
-    public function tick(Tick $tick)
+    public function tick(Tick $tick): void
     {
         $rpt = $tick->getReport();
 
@@ -111,28 +104,7 @@ class SymfonyConsoleProgress implements EventSubscriberInterface
             $this->start($tick);
         }
 
-        $msgSegs = [$tick->getMessage()];
-
-        if ($this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-            $msgSegs[] = sprintf('Processed: <fg=green>%s</fg=green>', number_format($rpt->getNumItemsSuccess(), 0));
-            $msgSegs[] = sprintf('Skipped: <fg=yellow>%s</fg=yellow>', number_format($rpt->getNumItemsFail(), 0));
-            $msgSegs[] = sprintf('Failed: <fg=red>%s</fg=red>'       , number_format($rpt->getNumItemsSkip(), 0));
-        }
-
-        if ($this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
-
-            $msgSegs[] = sprintf("Avg: %s", number_format($rpt->getAvgItemTime(), 2));
-
-            $msgSegs[] = sprintf(
-                'Memory: %s/%s',
-                $this->bytesToHuman($rpt->getMemUsage(),   2),
-                $this->bytesToHuman($rpt->getMemPeakUsage(), 2)
-            );
-        }
-
-        $this->progressBar->setMessage(implode(' | ', $msgSegs));
         $this->progressBar->setProgress($rpt->getNumItemsProcessed());
-        //$this->progressBar->advance($rpt->getTick()->getIncrementBy());
     }
 
     /**

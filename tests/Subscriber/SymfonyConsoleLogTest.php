@@ -17,6 +17,7 @@
 
 namespace Subscriber;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use TaskTracker\Events;
@@ -25,7 +26,7 @@ use TaskTracker\Test\Fixture\TickBuilderTrait;
 use TaskTracker\Tick;
 use TaskTracker\Tracker;
 
-class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
+class SymfonyConsoleLogTest extends TestCase
 {
     use TickBuilderTrait;
 
@@ -93,7 +94,7 @@ class SymfonyConsoleLogTest extends \PHPUnit_Framework_TestCase
         $obj->writeLogLine($this->getTick(Tick::FAIL));
 
         $this->assertRegExp(
-            '/\FAIL» \[3\/25\] [\d,]+:[\d]{2}:[\d]{2} \(3\/3\/3\) Processing item 3/',
+            '/^FAIL» \[3\/25\] [\d,]+:[\d]{2}:[\d]{2} \(3\/3\/3\) Processing item 3/',
             trim($output->fetch())
         );
     }

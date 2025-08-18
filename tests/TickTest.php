@@ -15,6 +15,7 @@
  * ------------------------------------------------------------------
  */
 
+use PHPUnit\Framework\TestCase;
 use TaskTracker\Test\Fixture\TickBuilderTrait;
 use TaskTracker\Tick;
 
@@ -23,7 +24,7 @@ use TaskTracker\Tick;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class TickTest extends \PHPUnit_Framework_TestCase
+class TickTest extends TestCase
 {
     use TickBuilderTrait;
 
@@ -39,7 +40,7 @@ class TickTest extends \PHPUnit_Framework_TestCase
 
     public function testInstantiateWithInvalidStatusThrowsException()
     {
-        $this->setExpectedException('\InvalidArgumentException');
+        $this->expectException('\InvalidArgumentException');
         $obj = $this->getTick(3);
     }
 
@@ -49,10 +50,10 @@ class TickTest extends \PHPUnit_Framework_TestCase
     {
         $obj = $this->getTick(Tick::SKIP, 'hi', ['foo' => 'bar']);
 
-        $this->assertEquals('hi',                      $obj->getMessage());
-        $this->assertEquals(Tick::SKIP,                $obj->getStatus());
-        $this->assertEquals(['foo' => 'bar'],          $obj->getExtraInfo());
-        $this->assertInternalType('float',             $obj->getTimestamp());
+        $this->assertEquals('hi', $obj->getMessage());
+        $this->assertEquals(Tick::SKIP, $obj->getStatus());
+        $this->assertEquals(['foo' => 'bar'], $obj->getExtraInfo());
+        $this->assertIsFloat($obj->getTimestamp());
         $this->assertInstanceOf('\TaskTracker\Report', $obj->getReport());
     }
 

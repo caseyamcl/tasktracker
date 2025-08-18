@@ -19,6 +19,7 @@ namespace Subscriber;
 
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
+use PHPUnit\Framework\TestCase;
 use TaskTracker\Events;
 use TaskTracker\Subscriber\Psr3Logger;
 use TaskTracker\Test\Fixture\TickBuilderTrait;
@@ -28,7 +29,7 @@ use TaskTracker\Test\Fixture\TickBuilderTrait;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class Psr3LoggerTest extends \PHPUnit_Framework_TestCase
+class Psr3LoggerTest extends TestCase
 {
     use TickBuilderTrait;
 

@@ -17,7 +17,7 @@
 
 namespace TaskTracker\Test;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use TaskTracker\Test\Fixture\ArrayRecordingSubscriber;
 use TaskTracker\Tick;
 use TaskTracker\TrackerFactory;
@@ -27,7 +27,7 @@ use TaskTracker\TrackerFactory;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class TrackerFactoryTest extends PHPUnit_Framework_TestCase
+class TrackerFactoryTest extends TestCase
 {
     public function testInstantiateSucceeds()
     {

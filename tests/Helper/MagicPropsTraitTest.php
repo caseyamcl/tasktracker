@@ -17,6 +17,7 @@
 
 namespace Helper;
 
+use PHPUnit\Framework\TestCase;
 use TaskTracker\Test\Fixture\MagicPropsObject;
 
 /**
@@ -24,7 +25,7 @@ use TaskTracker\Test\Fixture\MagicPropsObject;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class MagicPropsTraitTest extends \PHPUnit_Framework_TestCase
+class MagicPropsTraitTest extends TestCase
 {
 
     public function testToArrayReturnsExpectedValues()

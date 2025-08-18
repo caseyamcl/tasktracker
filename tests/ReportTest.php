@@ -17,6 +17,7 @@
 
 namespace TaskTracker\Test;
 
+use PHPUnit\Framework\TestCase;
 use TaskTracker\Report;
 use TaskTracker\Tick;
 
@@ -25,7 +26,7 @@ use TaskTracker\Tick;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class ReportTest extends \PHPUnit_Framework_TestCase
+class ReportTest extends TestCase
 {
     public function testGetReportObjSucceeds()
     {
