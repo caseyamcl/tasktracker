@@ -17,6 +17,7 @@
 
 namespace Helper;
 
+use PHPUnit\Framework\TestCase;
 use TaskTracker\Helper\TimeFormatterTrait;
 
 /**
@@ -24,7 +25,7 @@ use TaskTracker\Helper\TimeFormatterTrait;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class TimeFormatterTraitTest extends \PHPUnit_Framework_TestCase
+class TimeFormatterTraitTest extends TestCase
 {
     use TimeFormatterTrait;
 

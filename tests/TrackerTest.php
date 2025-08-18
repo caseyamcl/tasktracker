@@ -17,6 +17,7 @@
 
 namespace TaskTracker\Test;
 
+use PHPUnit\Framework\TestCase;
 use TaskTracker\Test\Fixture\ArrayRecordingSubscriber;
 use TaskTracker\Tick;
 use TaskTracker\Tracker;
@@ -26,7 +27,7 @@ use TaskTracker\Tracker;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class TrackerTest extends \PHPUnit_Framework_TestCase
+class TrackerTest extends TestCase
 {
     public function testInstantiateSucceeds()
     {
@@ -111,7 +112,7 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
 
     public function testStartFailsOnSecondCall()
     {
-        $this->setExpectedException('TaskTracker\TrackerException');
+        $this->expectException('TaskTracker\TrackerException');
 
         $obj = $this->getTrackerObj();
         $obj->start();
@@ -132,7 +133,7 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
 
     public function testFinishThrowsExceptionIfNotStarted()
     {
-        $this->setExpectedException('TaskTracker\TrackerException');
+        $this->expectException('TaskTracker\TrackerException');
 
         $obj = $this->getTrackerObj();
         $obj->finish();
@@ -142,7 +143,7 @@ class TrackerTest extends \PHPUnit_Framework_TestCase
 
     public function testAbortThrowsExceptionIfNotStarted()
     {
-        $this->setExpectedException('TaskTracker\TrackerException');
+        $this->expectException('TaskTracker\TrackerException');
 
         $obj = $this->getTrackerObj();
         $obj->abort();

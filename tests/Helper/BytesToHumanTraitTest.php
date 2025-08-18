@@ -17,6 +17,7 @@
 
 namespace Helper;
 
+use PHPUnit\Framework\TestCase;
 use TaskTracker\Helper\BytesToHumanTrait;
 
 /**
@@ -24,12 +25,12 @@ use TaskTracker\Helper\BytesToHumanTrait;
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class BytesToHumanTraitTest extends \PHPUnit_Framework_TestCase
+class BytesToHumanTraitTest extends TestCase
 {
     use BytesToHumanTrait;
 
     /**
-     * @dataProvider testConversionWorksProvider
+     * @dataProvider conversionWorksProvider
      */
     public function testConversionWorks($inputValue, $inputDecimals, $expected)
     {
@@ -41,7 +42,7 @@ class BytesToHumanTraitTest extends \PHPUnit_Framework_TestCase
     /**
      * Data provider for testConversionWorks
      */
-    public function testConversionWorksProvider()
+    public function conversionWorksProvider()
     {
         return array(
             [1429365116108.8,  2, '1.43TB'     ],

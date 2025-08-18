@@ -97,7 +97,7 @@ class SymfonyConsoleLog implements EventSubscriberInterface
     // ---------------------------------------------------------------
 
     /**
-     * Set prefix for a given status
+     * Set the prefix for a given status
      *
      * @param int    $status  Tick::SUCCESS, Tick::FAIL, or Tick::SUCCESS
      * @param string $prefix

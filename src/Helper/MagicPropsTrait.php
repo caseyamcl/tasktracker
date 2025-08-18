@@ -51,10 +51,7 @@ trait MagicPropsTrait
 
     // ---------------------------------------------------------------
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $outArr = [];
 
@@ -63,7 +60,7 @@ trait MagicPropsTrait
             $ref = new \ReflectionMethod(__CLASS__, $mthd);
 
             if ($ref->isPublic() && substr($mthd, 0, 3) == 'get') {
-                $propName = strtolower($mthd{3}) . substr($mthd, 4);
+                $propName = strtolower($mthd[3]) . substr($mthd, 4);
                 $outArr[$propName] = call_user_func([$this, $mthd]);
             }
         }
@@ -79,9 +76,8 @@ trait MagicPropsTrait
      * @param string $item
      * @return array  Callback
      */
-    private function getMethodCallback($item)
+    private function getMethodCallback(string $item): array
     {
         return [$this, 'get' . ucfirst($item)];
     }
-
 }
