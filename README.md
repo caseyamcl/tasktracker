@@ -24,26 +24,33 @@ send periodic snapshots of the state of the system to Monolog while a task is ex
 Tracker object, you can accomplish both of these goals:
 
 ```php
+
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
+use TaskTracker\Subscriber\SymfonyConsoleLog;
 use TaskTracker\Tracker;
 use TaskTracker\Tick;
-use TaskTracker\Subscriber\SymfonyConsoleProgress,
+use TaskTracker\Subscriber\SymfonyConsoleProgress;
 use TaskTracker\Subscriber\Psr3Logger;
-use Symfony\Console\Output\ConsoleOutput;
 use Monolog\Logger as MonologLogger;
 
+require_once __DIR__ . '/vendor/autoload.php';
+
+$consoleOutput = new ConsoleOutput(OutputInterface::VERBOSITY_DEBUG);
 
 // Setup subscribers
 $subscribers = [
-    new SymfonyConsoleProgress(new ConsoleOutput()),
-    new Psr3Logger(new MonologLogger())
+    // new SymfonyConsoleProgress($consoleOutput), // <-- This outputs a standard Symfony Console Progress Bar
+    new SymfonyConsoleLog($consoleOutput),         // <-- This outputs a running log of task messages
+    new Psr3Logger(new MonologLogger('logger'))    // <-- This logs events to a standard Monolog Logger
 ];
 
-// Setup a tracker for a job with 100 items
-$tracker = Tracker::build(100, $subscribers);
+// Create a tracker for a job with 100 items
+$tracker = Tracker::build($subscribers, 500);
 
 $tracker->start("Let's go");
-for ($i = 0; $i < 100; $i++) {
-    // Do some work of some sort...
+for ($i = 0; $i < 500; $i++) {
+    usleep(10000);
     $tracker->tick();
 }
 $tracker->finish("All done");
